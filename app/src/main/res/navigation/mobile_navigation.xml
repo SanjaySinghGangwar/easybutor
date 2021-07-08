@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.thedramaticcolumnist.app.ui.home.HomeFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/home_to_cart"
+            app:destination="@id/cart" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_order"
+        android:name="com.thedramaticcolumnist.app.ui.Order.OrderFragment"
+        android:label="@string/menu_gallery"
+        tools:layout="@layout/order_fragment" />
+
+    <fragment
+        android:id="@+id/nav_wishlist"
+        android:name="com.thedramaticcolumnist.app.ui.WishList.WishlistFragment"
+        android:label="@string/menu_slideshow"
+        tools:layout="@layout/wishlist_fragment" />
+    <fragment
+        android:id="@+id/nav_account"
+        android:name="com.thedramaticcolumnist.app.ui.YourAccount.YourAccount"
+        android:label="@string/menu_account"
+        tools:layout="@layout/your_account_fragment" />
+    <fragment
+        android:id="@+id/nav_customer_service"
+        android:name="com.thedramaticcolumnist.app.ui.CustomerService.CustomerService"
+        android:label="@string/menu_customer_service"
+        tools:layout="@layout/customer_fragment" />
+    <fragment
+        android:id="@+id/nav_category"
+        android:name="com.thedramaticcolumnist.app.ui.Category.CategoryFragment"
+        android:label="@string/menu_category"
+        tools:layout="@layout/category_fragment" />
+    <fragment
+        android:id="@+id/nav_distributor"
+        android:name="com.thedramaticcolumnist.app.ui.Distributor.DistributerFragment"
+        android:label="@string/menu_distributor"
+        tools:layout="@layout/distributer_fragment" />
+    <fragment
+        android:id="@+id/nav_products"
+        android:name="com.thedramaticcolumnist.app.ui.Products.ProductsFragment"
+        android:label="@string/menu_products"
+        tools:layout="@layout/products_fragment" />
+    <fragment
+        android:id="@+id/cart"
+        android:name="com.thedramaticcolumnist.app.ui.Cart.Cart"
+        android:label="cart"
+        tools:layout="@layout/cart" />
+</navigation>
