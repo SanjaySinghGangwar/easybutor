@@ -1,7 +1,9 @@
 package com.thedramaticcolumnist.app.Utils
 
 import android.content.Context
+import android.text.TextUtils
 import android.util.Log
+import android.widget.EditText
 import android.widget.Toast
 
 object mUtils {
@@ -11,5 +13,14 @@ object mUtils {
 
     fun mLog(message: String) {
         Log.i("SANJAY", "mLog: $message")
+    }
+
+    fun isValidText(text: String?, editText: EditText): Boolean {
+        if (TextUtils.isEmpty(text)) {
+            editText.requestFocus()
+            editText.error = "Mandatory"
+            return false
+        }
+        return true
     }
 }

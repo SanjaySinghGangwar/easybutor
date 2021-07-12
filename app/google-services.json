@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "482739890088",
+    "project_id": "easybutor",
+    "storage_bucket": "easybutor.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482739890088:android:769bb4e15757a49ef41f9d",
+        "android_client_info": {
+          "package_name": "com.thedramaticcolumnist.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "482739890088-hjdmjhh93rebtthmdo05m1l07u166cab.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDogrTjr6CW467x-4jrKjMrOT_SDaQtOyQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "482739890088-hjdmjhh93rebtthmdo05m1l07u166cab.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
