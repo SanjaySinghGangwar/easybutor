@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="cart">Cart</string>
-    <string name="menu_category">Category</string>
-    <string name="menu_distributor">Distributor</string>
-    <string name="menu_products">Products</string>
-</resources>
