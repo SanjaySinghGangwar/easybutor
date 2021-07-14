@@ -15,8 +15,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Easybutor"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.Login.Login"></activity>
-        <activity android:name=".ui.SignUp.SignUp" />
+        <activity
+            android:name=".ui.Login.Login"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".ui.SignUp.SignUp"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".ui.HomeScreen"
             android:label="@string/title_activity_home_screen"

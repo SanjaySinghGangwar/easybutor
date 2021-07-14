@@ -3,6 +3,7 @@ package com.thedramaticcolumnist.app.ui.Products
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -11,14 +12,25 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.thedramaticcolumnist.app.Model.ProductModel
+import com.thedramaticcolumnist.app.Utils.mUtils.mToast
+import com.thedramaticcolumnist.app.databinding.ProductLayoutBinding
 import com.thedramaticcolumnist.app.databinding.ProductsFragmentBinding
 
 class ProductsFragment : Fragment() {
 
     private lateinit var productsAccountViewModel: ProductsViewModel
     private var _binding: ProductsFragmentBinding? = null
-
     private val bind get() = _binding!!
+    private lateinit var myRef: DatabaseReference
+    lateinit var database: FirebaseDatabase
+
 
     companion object {
         fun newInstance() = ProductsFragment()
@@ -36,7 +48,7 @@ class ProductsFragment : Fragment() {
         val root: View = bind.root
 
         val textView: TextView = bind.textView
-        productsAccountViewModel.text.observe(viewLifecycleOwner, Observer {
+        productsAccountViewModel.text.observe(viewLifecycleOwner, {
             textView.text = it
         })
         return root
@@ -47,15 +59,22 @@ class ProductsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initAllComponents()
-        loadUrl("https://thedramaticcolumnist.com/product1/")
+        //loadUrl("https://thedramaticcolumnist.com/product1/")
     }
 
     private fun initAllComponents() {
+        database = FirebaseDatabase.getInstance()
+        myRef = database.reference.child("Products")
+        bind.recycler.layoutManager = GridLayoutManager(requireContext(), 2)
+
+        // mAdapter = ProductsAdapter(context?.applicationContext!!, this)
+        //bind.recycler.adapter = mAdapter
+        //mAdapter.setItems(data.articles)
 
     }
 
     fun loadUrl(url: String) {
-        val settings: WebSettings =bind. webView.getSettings()
+        val settings: WebSettings = bind.webView.getSettings()
         settings.domStorageEnabled = true
 
         bind.webView.requestFocus();
@@ -88,4 +107,51 @@ class ProductsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    override fun onStart() {
+        super.onStart()
+        initRecycler()
+
+    }
+
+    private fun initRecycler() {
+        val option: FirebaseRecyclerOptions<ProductModel> =
+            FirebaseRecyclerOptions.Builder<ProductModel>()
+                .setQuery(myRef.orderByChild("product_name"), ProductModel::class.java)
+                .build()
+        val recyclerAdapter =
+            object : FirebaseRecyclerAdapter<ProductModel, ProductsViewHolder>(option) {
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    viewType: Int,
+                ): ProductsViewHolder {
+                    val binding: ProductLayoutBinding =
+                        ProductLayoutBinding.inflate(LayoutInflater.from(parent.context),
+                            parent,
+                            false)
+                    return ProductsViewHolder(requireContext(), binding, this)
+                }
+
+                override fun onBindViewHolder(
+                    holder: ProductsViewHolder,
+                    position: Int,
+                    model: ProductModel,
+                ) {
+                    bind.progressBar.visibility = GONE
+                    holder.bind(model)
+                    holder.card.setOnClickListener {
+                        //mToast(requireContext(), getRef(position).key.toString())
+                        val action = ProductsFragmentDirections.productsToProductDetail(getRef(position).key.toString())
+                        view?.findNavController()?.navigate(action)
+                    }
+
+                }
+
+
+            }
+
+        bind.recycler.adapter = recyclerAdapter
+        recyclerAdapter.startListening()
+    }
+
 }
