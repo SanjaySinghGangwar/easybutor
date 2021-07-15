@@ -10,7 +10,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,7 +18,6 @@ import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.thedramaticcolumnist.app.Model.ProductModel
-import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.ProductLayoutBinding
 import com.thedramaticcolumnist.app.databinding.ProductsFragmentBinding
 
@@ -59,7 +57,6 @@ class ProductsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initAllComponents()
-        //loadUrl("https://thedramaticcolumnist.com/product1/")
     }
 
     private fun initAllComponents() {
@@ -67,9 +64,6 @@ class ProductsFragment : Fragment() {
         myRef = database.reference.child("Products")
         bind.recycler.layoutManager = GridLayoutManager(requireContext(), 2)
 
-        // mAdapter = ProductsAdapter(context?.applicationContext!!, this)
-        //bind.recycler.adapter = mAdapter
-        //mAdapter.setItems(data.articles)
 
     }
 
@@ -129,7 +123,7 @@ class ProductsFragment : Fragment() {
                         ProductLayoutBinding.inflate(LayoutInflater.from(parent.context),
                             parent,
                             false)
-                    return ProductsViewHolder(requireContext(), binding, this)
+                    return ProductsViewHolder(requireContext(), binding)
                 }
 
                 override fun onBindViewHolder(

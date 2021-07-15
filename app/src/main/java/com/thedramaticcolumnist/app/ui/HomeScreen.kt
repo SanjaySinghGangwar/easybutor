@@ -3,6 +3,7 @@ package com.thedramaticcolumnist.app.ui
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -11,8 +12,11 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.HomeScreenBinding
@@ -20,23 +24,26 @@ import com.thedramaticcolumnist.app.databinding.HomeScreenBinding
 class HomeScreen : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: HomeScreenBinding
+    private lateinit var bind: HomeScreenBinding
     private lateinit var navController: NavController
+    private lateinit var firebaseDatabase: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = HomeScreenBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        bind = HomeScreenBinding.inflate(layoutInflater)
+        setContentView(bind.root)
 
-        setSupportActionBar(binding.appBarHomeScreen.toolbar)
+        initAllComponents()
 
-        binding.appBarHomeScreen.fab.setOnClickListener { view ->
+        setSupportActionBar(bind.appBarHomeScreen.toolbar)
+
+        bind.appBarHomeScreen.fab.setOnClickListener { view ->
             Snackbar.make(view, "We can add item here", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
-        val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
+        val drawerLayout: DrawerLayout = bind.drawerLayout
+        val navView: NavigationView = bind.navView
         navController = findNavController(R.id.nav_host_fragment_content_home_screen)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -51,10 +58,45 @@ class HomeScreen : AppCompatActivity() {
             R.id.nav_customer_service), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        setUpProfileData()
+    }
+
+    private fun initAllComponents() {
+        firebaseDatabase =
+            FirebaseDatabase.getInstance().reference.child(getString(R.string.app_name)).child(
+                FirebaseAuth.getInstance().currentUser?.uid.toString())
+    }
+
+    private fun setUpProfileData() {
+        val header = bind.navView.getHeaderView(0);
+        header.findViewById<TextView>(R.id.email).text =
+            FirebaseAuth.getInstance().currentUser?.email
+
+        firebaseDatabase.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.hasChild("name")) {
+                    header.findViewById<TextView>(R.id.name).text =
+                        snapshot.child("name").value.toString()
+                }
+                if (snapshot.hasChild("profile_image")) {
+                    Glide.with(this@HomeScreen)
+                        .load(snapshot.child("profile_image").value.toString())
+                        .placeholder(R.drawable.ic_person)
+                        .into(header.findViewById(R.id.imageView))
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                mToast(this@HomeScreen, error.message)
+            }
+        })
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.home_screen, menu)
         return true
     }

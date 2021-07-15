@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.isValidText
@@ -51,10 +52,18 @@ class SignUp : AppCompatActivity(), View.OnClickListener {
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "createUserWithEmail:success")
-                                bind.progressBar.visibility = GONE
-                                intent = Intent(this@SignUp, HomeScreen::class.java)
-                                startActivity(intent)
-                                finish()
+                                FirebaseDatabase.getInstance().reference.
+                                child(applicationContext.getString(R.string.app_name))
+                                    .child(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                    .child("name")
+                                    .setValue(bind.name.text.toString().trim())
+                                    .addOnSuccessListener {
+                                        bind.progressBar.visibility = GONE
+                                        intent = Intent(this@SignUp, HomeScreen::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+
                             } else {
                                 bind.progressBar.visibility = GONE
                                 Log.w(TAG, "createUserWithEmail:failure", task.exception)

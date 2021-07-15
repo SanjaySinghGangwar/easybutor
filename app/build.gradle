@@ -72,4 +72,7 @@ dependencies {
 
     //Firebase Ui
     implementation 'com.firebaseui:firebase-ui-database:7.1.1'
+
+    //Circle Image View
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }
