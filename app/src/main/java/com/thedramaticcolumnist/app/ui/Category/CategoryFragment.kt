@@ -3,16 +3,19 @@ package com.thedramaticcolumnist.app.ui.Category
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.databinding.CategoryFragmentBinding
+import com.thedramaticcolumnist.app.databinding.CategoryLayoutBinding
+import com.thedramaticcolumnist.app.mViewHolder.CategoryViewHolder
 
 
 class CategoryFragment : Fragment() {
@@ -22,7 +25,8 @@ class CategoryFragment : Fragment() {
 
 
     private val bind get() = _binding!!
-
+    private lateinit var myRef: DatabaseReference
+    lateinit var database: FirebaseDatabase
 
     companion object {
         fun newInstance() = CategoryFragment()
@@ -49,13 +53,55 @@ class CategoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAllComponents()
-        loadUrl("https://thedramaticcolumnist.com/category/")
+        setUpCategory()
     }
 
 
     private fun initAllComponents() {
+        database = FirebaseDatabase.getInstance()
+        myRef = database.reference
+        bind.categoryRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
+
+    }
+    private fun setUpCategory() {
+        showLoader()
+        val option: FirebaseRecyclerOptions<ProductModel> =
+            FirebaseRecyclerOptions.Builder<ProductModel>()
+                .setQuery(myRef.child("Categories"), ProductModel::class.java)
+                .build()
+        val recyclerAdapter =
+            object : FirebaseRecyclerAdapter<ProductModel, CategoryViewHolder>(option) {
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    viewType: Int,
+                ): CategoryViewHolder {
+                    val binding: CategoryLayoutBinding =
+                        CategoryLayoutBinding.inflate(LayoutInflater.from(parent.context),
+                            parent,
+                            false)
+                    return CategoryViewHolder(requireContext(), binding)
+                }
+
+                override fun onBindViewHolder(
+                    holder: CategoryViewHolder,
+                    position: Int,
+                    model: ProductModel,
+                ) {
+                    hideLoader()
+                    holder.bind(model)
+                    /* holder.card.setOnClickListener {
+                         //mToast(requireContext(), getRef(position).key.toString())
+                         val action = ProductsFragmentDirections.productsToProductDetail(getRef(position).key.toString())
+                         view?.findNavController()?.navigate(action)
+                     }*/
+
+                }
 
 
+            }
+
+        bind.categoryRecycler.adapter = recyclerAdapter
+        recyclerAdapter.startListening()
     }
 
 
@@ -63,35 +109,16 @@ class CategoryFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-    fun loadUrl(url: String) {
-        val settings: WebSettings =bind. webView.getSettings()
-        settings.domStorageEnabled = true
-
-        bind.webView.requestFocus();
-        bind.webView.settings.lightTouchEnabled = true;
-        bind.webView.settings.javaScriptEnabled = true;
-        bind.webView.settings.setGeolocationEnabled(true);
-        bind.webView.isSoundEffectsEnabled = true;
-        bind.webView.settings.setAppCacheEnabled(true);
-        bind.webView.loadUrl(url);
-        bind.webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                view.loadUrl(url)
-                bind.progressBar.visibility = VISIBLE
-                return true
-            }
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-            }
-
-            override fun onPageCommitVisible(view: WebView?, url: String?) {
-                super.onPageCommitVisible(view, url)
-                bind.progressBar.visibility = GONE
-            }
+    fun showLoader() {
+        if (bind.progressBar.visibility == View.GONE) {
+            bind.progressBar.visibility = View.VISIBLE
         }
     }
 
+    fun hideLoader() {
+        if (bind.progressBar.visibility == View.VISIBLE) {
+            bind.progressBar.visibility = View.GONE
+        }
+    }
 
 }

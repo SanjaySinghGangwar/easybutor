@@ -11,4 +11,6 @@ data class ProductModel(
     var short_description: String? = "",
     var subCategory: String? = "",
     var quantity: String? = "",
+    var name: String? = "",
+    var icon: String? = "",
 )
