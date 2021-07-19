@@ -13,4 +13,5 @@ data class ProductModel(
     var quantity: String? = "",
     var name: String? = "",
     var icon: String? = "",
+    var id: String? = "",
 )

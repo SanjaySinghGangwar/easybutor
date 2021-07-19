@@ -1,20 +1,21 @@
 package com.thedramaticcolumnist.app.ui.Cart
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.thedramaticcolumnist.app.R
+import androidx.lifecycle.ViewModelProvider
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.thedramaticcolumnist.app.Database.mDatabase.myCart
+import com.thedramaticcolumnist.app.Model.ProductModel
+import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.CartBinding
-import com.thedramaticcolumnist.app.databinding.DistributerFragmentBinding
-import com.thedramaticcolumnist.app.ui.Distributor.DistributerViewModel
+import com.thedramaticcolumnist.app.databinding.CartItemLayoutBinding
+import com.thedramaticcolumnist.app.mViewHolder.CartViewHolder
 
 class Cart : Fragment() {
 
@@ -44,48 +45,78 @@ class Cart : Fragment() {
         })
         return root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAllComponent()
-        loadUrl("https://thedramaticcolumnist.com/cart/")
+        showCartData()
+    }
+
+    private fun showCartData() {
+
+        val option: FirebaseRecyclerOptions<ProductModel> =
+            FirebaseRecyclerOptions.Builder<ProductModel>()
+                .setQuery(myCart!!, ProductModel::class.java)
+                .build()
+        val recyclerAdapter =
+            object : FirebaseRecyclerAdapter<ProductModel, CartViewHolder>(option) {
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    viewType: Int,
+                ): CartViewHolder {
+                    val binding: CartItemLayoutBinding =
+                        CartItemLayoutBinding.inflate(LayoutInflater.from(parent.context),
+                            parent,
+                            false)
+                    return CartViewHolder(requireContext(), binding)
+                }
+
+                override fun onBindViewHolder(
+                    holder: CartViewHolder,
+                    position: Int,
+                    model: ProductModel,
+                ) {
+                   
+                    holder.bind(model)
+                    holder.remove.setOnClickListener {
+
+                        myCart!!.child(getRef(position).key.toString()).removeValue()
+                            .addOnSuccessListener {
+                                mToast(requireContext(), "Removed")
+                                notifyDataSetChanged()
+                            }
+
+                    }
+
+                }
+
+
+            }
+
+
+        bind.recycler.adapter = recyclerAdapter
+        recyclerAdapter.startListening()
     }
 
     private fun initAllComponent() {
 
     }
 
-    fun loadUrl(url: String) {
-        val settings: WebSettings =bind. webView.getSettings()
-        settings.domStorageEnabled = true
 
-
-        bind.webView.requestFocus();
-        bind.webView.settings.lightTouchEnabled = true;
-        bind.webView.settings.javaScriptEnabled = true;
-        bind.webView.settings.setGeolocationEnabled(true);
-        bind.webView.isSoundEffectsEnabled = true;
-        bind.webView.settings.setAppCacheEnabled(true);
-        bind.webView.loadUrl(url);
-        bind.webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                view.loadUrl(url)
-                bind.progressBar.visibility = View.VISIBLE
-                return true
-            }
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-            }
-
-            override fun onPageCommitVisible(view: WebView?, url: String?) {
-                super.onPageCommitVisible(view, url)
-                bind.progressBar.visibility = View.GONE
-            }
-        }
-    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
+    fun showLoader() {
+        if (bind.progressBar.visibility == View.GONE) {
+            bind.progressBar.visibility = View.VISIBLE
+        }
+    }
+
+    fun hideLoader() {
+        if (bind.progressBar.visibility == View.VISIBLE) {
+            bind.progressBar.visibility = View.GONE
+        }
+    }
 }

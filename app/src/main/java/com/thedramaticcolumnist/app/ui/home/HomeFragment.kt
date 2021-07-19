@@ -92,8 +92,6 @@ class HomeFragment : Fragment() {
                 ) {
                     hideLoader()
                     holder.bind(model)
-
-
                 }
 
 

@@ -58,7 +58,7 @@
     <fragment
         android:id="@+id/cart"
         android:name="com.thedramaticcolumnist.app.ui.Cart.Cart"
-        android:label="cart"
+        android:label="Cart"
         tools:layout="@layout/cart" />
     <fragment
         android:id="@+id/productDetail"
