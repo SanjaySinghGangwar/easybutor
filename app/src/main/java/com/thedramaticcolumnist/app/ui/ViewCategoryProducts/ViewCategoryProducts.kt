@@ -1,17 +1,12 @@
-package com.thedramaticcolumnist.app.ui.Products
+package com.thedramaticcolumnist.app.ui.ViewCategoryProducts
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -19,46 +14,36 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.databinding.ProductLayoutBinding
-import com.thedramaticcolumnist.app.databinding.ProductsFragmentBinding
+import com.thedramaticcolumnist.app.databinding.ViewCategoryProductsBinding
+import com.thedramaticcolumnist.app.ui.Products.ProductsFragmentDirections
+import com.thedramaticcolumnist.app.ui.Products.ProductsViewHolder
 
-class ProductsFragment : Fragment() {
 
-    private lateinit var productsAccountViewModel: ProductsViewModel
-    private var _binding: ProductsFragmentBinding? = null
+class ViewCategoryProducts : Fragment() {
+
+    private var _binding: ViewCategoryProductsBinding? = null
     private val bind get() = _binding!!
 
+    val args: ViewCategoryProductsArgs by navArgs()
 
     private lateinit var myRef: DatabaseReference
     lateinit var database: FirebaseDatabase
-
-
-    companion object {
-        fun newInstance() = ProductsFragment()
-    }
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        productsAccountViewModel =
-            ViewModelProvider(this).get(ProductsViewModel::class.java)
-
-        _binding = ProductsFragmentBinding.inflate(inflater, container, false)
-        val root: View = bind.root
-
-        val textView: TextView = bind.textView
-        productsAccountViewModel.text.observe(viewLifecycleOwner, {
-            textView.text = it
-        })
-        return root
+        _binding = ViewCategoryProductsBinding.inflate(inflater, container, false)
+        return bind.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAllComponents()
+
     }
+
 
     private fun initAllComponents() {
         database = FirebaseDatabase.getInstance()
@@ -67,7 +52,6 @@ class ProductsFragment : Fragment() {
 
 
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -83,7 +67,7 @@ class ProductsFragment : Fragment() {
     private fun initRecycler() {
         val option: FirebaseRecyclerOptions<ProductModel> =
             FirebaseRecyclerOptions.Builder<ProductModel>()
-                .setQuery(myRef.orderByChild("product_name"), ProductModel::class.java)
+                .setQuery(myRef.orderByChild("category").equalTo(args.category), ProductModel::class.java)
                 .build()
         val recyclerAdapter =
             object : FirebaseRecyclerAdapter<ProductModel, ProductsViewHolder>(option) {
@@ -103,11 +87,11 @@ class ProductsFragment : Fragment() {
                     position: Int,
                     model: ProductModel,
                 ) {
-                    bind.progressBar.visibility = GONE
                     holder.bind(model)
                     holder.card.setOnClickListener {
                         //mToast(requireContext(), getRef(position).key.toString())
-                        val action = ProductsFragmentDirections.productsToProductDetail(getRef(position).key.toString())
+                        val action =
+                            ViewCategoryProductsDirections.actionViewCategoryProductsToProductDetail(getRef(position).key.toString())
                         view?.findNavController()?.navigate(action)
                     }
 
@@ -119,5 +103,4 @@ class ProductsFragment : Fragment() {
         bind.recycler.adapter = recyclerAdapter
         recyclerAdapter.startListening()
     }
-
 }

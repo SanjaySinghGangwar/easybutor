@@ -13,6 +13,9 @@
         <action
             android:id="@+id/home_to_cart"
             app:destination="@id/cart" />
+        <action
+            android:id="@+id/home_to_CategoryProducts"
+            app:destination="@id/viewCategoryProducts" />
     </fragment>
 
     <fragment
@@ -40,7 +43,11 @@
         android:id="@+id/nav_category"
         android:name="com.thedramaticcolumnist.app.ui.Category.CategoryFragment"
         android:label="@string/menu_category"
-        tools:layout="@layout/category_fragment" />
+        tools:layout="@layout/category_fragment" >
+        <action
+            android:id="@+id/action_nav_category_to_viewCategoryProducts"
+            app:destination="@id/viewCategoryProducts" />
+    </fragment>
     <fragment
         android:id="@+id/nav_distributor"
         android:name="com.thedramaticcolumnist.app.ui.Distributor.DistributerFragment"
@@ -68,5 +75,17 @@
         <argument
             android:name="productID"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/viewCategoryProducts"
+        android:name="com.thedramaticcolumnist.app.ui.ViewCategoryProducts.ViewCategoryProducts"
+        android:label="View Category Products"
+        tools:layout="@layout/view_category_products" >
+        <argument
+            android:name="category"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_viewCategoryProducts_to_productDetail"
+            app:destination="@id/productDetail" />
     </fragment>
 </navigation>

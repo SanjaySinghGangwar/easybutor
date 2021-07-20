@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -16,6 +17,7 @@ import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.databinding.CategoryFragmentBinding
 import com.thedramaticcolumnist.app.databinding.CategoryLayoutBinding
 import com.thedramaticcolumnist.app.mViewHolder.CategoryViewHolder
+import com.thedramaticcolumnist.app.ui.home.HomeFragmentDirections
 
 
 class CategoryFragment : Fragment() {
@@ -89,6 +91,10 @@ class CategoryFragment : Fragment() {
                 ) {
                     hideLoader()
                     holder.bind(model)
+                    holder.card.setOnClickListener {
+                        val action = CategoryFragmentDirections.actionNavCategoryToViewCategoryProducts(model.name.toString())
+                        view?.findNavController()?.navigate(action)
+                    }
                     /* holder.card.setOnClickListener {
                          //mToast(requireContext(), getRef(position).key.toString())
                          val action = ProductsFragmentDirections.productsToProductDetail(getRef(position).key.toString())
