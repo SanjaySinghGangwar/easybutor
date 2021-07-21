@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.databinding.ProductLayoutBinding
 
@@ -23,6 +24,6 @@ class ProductsViewHolder(
 
         itemBinding.name.text = item.product_name
         itemBinding.price.text = "₹ " + item.price
-        Glide.with(context).load(item.image_one).into(itemBinding.image);
+        Glide.with(context).load(item.image_one).diskCacheStrategy(DiskCacheStrategy.ALL).into(itemBinding.image);
     }
 }

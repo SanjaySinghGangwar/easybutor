@@ -107,6 +107,10 @@ class HomeScreen : AppCompatActivity() {
                 navController.navigateUp()
                 navController.navigate(R.id.home_to_cart)
 
+            }R.id.search -> {
+                navController.navigateUp()
+                navController.navigate(R.id.home_to_search)
+
             }
         }
         return super.onOptionsItemSelected(item)

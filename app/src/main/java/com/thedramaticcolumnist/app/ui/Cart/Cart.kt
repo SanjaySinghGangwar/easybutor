@@ -12,12 +12,14 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.thedramaticcolumnist.app.Database.mDatabase.myCart
 import com.thedramaticcolumnist.app.Model.ProductModel
+import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.CartBinding
 import com.thedramaticcolumnist.app.databinding.CartItemLayoutBinding
 import com.thedramaticcolumnist.app.mViewHolder.CartViewHolder
 
-class Cart : Fragment() {
+
+class Cart : Fragment(), View.OnClickListener {
 
     private lateinit var cartViewModel: CartViewModel
     private var _binding: CartBinding? = null
@@ -76,7 +78,7 @@ class Cart : Fragment() {
                     position: Int,
                     model: ProductModel,
                 ) {
-                   
+
                     holder.bind(model)
                     holder.remove.setOnClickListener {
 
@@ -99,7 +101,7 @@ class Cart : Fragment() {
     }
 
     private fun initAllComponent() {
-
+        bind.clearCart.setOnClickListener(this)
     }
 
 
@@ -117,6 +119,18 @@ class Cart : Fragment() {
     fun hideLoader() {
         if (bind.progressBar.visibility == View.VISIBLE) {
             bind.progressBar.visibility = View.GONE
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.clearCart -> {
+                myCart?.removeValue()?.addOnSuccessListener {
+                    mToast(requireContext(), "Removed")
+                }?.addOnFailureListener {
+                    mToast(requireContext(), it.message.toString())
+                }
+            }
         }
     }
 }

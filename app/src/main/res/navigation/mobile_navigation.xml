@@ -10,12 +10,24 @@
         android:name="com.thedramaticcolumnist.app.ui.home.HomeFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_home">
-        <action
+        <action app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             android:id="@+id/home_to_cart"
             app:destination="@id/cart" />
-        <action
+        <action app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             android:id="@+id/home_to_CategoryProducts"
             app:destination="@id/viewCategoryProducts" />
+        <action app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            android:id="@+id/home_to_search"
+            app:destination="@id/search2" />
     </fragment>
 
     <fragment
@@ -44,7 +56,10 @@
         android:name="com.thedramaticcolumnist.app.ui.Category.CategoryFragment"
         android:label="@string/menu_category"
         tools:layout="@layout/category_fragment" >
-        <action
+        <action app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             android:id="@+id/action_nav_category_to_viewCategoryProducts"
             app:destination="@id/viewCategoryProducts" />
     </fragment>
@@ -58,7 +73,10 @@
         android:name="com.thedramaticcolumnist.app.ui.Products.ProductsFragment"
         android:label="@string/menu_products"
         tools:layout="@layout/products_fragment">
-        <action
+        <action app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             android:id="@+id/products_to_productDetail"
             app:destination="@id/productDetail" />
     </fragment>
@@ -84,8 +102,25 @@
         <argument
             android:name="category"
             app:argType="string" />
-        <action
+        <action app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             android:id="@+id/action_viewCategoryProducts_to_productDetail"
             app:destination="@id/productDetail" />
+    </fragment>
+    <fragment
+        android:id="@+id/search2"
+        android:name="com.thedramaticcolumnist.app.ui.Search.Search"
+        android:label="Search"
+        tools:layout="@layout/search" >
+        <action app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+
+            android:id="@+id/search_to_productDetail"
+            app:destination="@id/productDetail"
+             />
     </fragment>
 </navigation>

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -48,6 +49,7 @@ class CartViewHolder(
                     Glide.with(context)
                         .load(snapshot.child("image_one").value.toString())
                         .placeholder(R.drawable.ic_person)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(itemBinding.image);
                 }
             }

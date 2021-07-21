@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.database.*
 import com.thedramaticcolumnist.app.Database.mDatabase.myCart
 import com.thedramaticcolumnist.app.R
-import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.adapter.productImagesAdapter
 import com.thedramaticcolumnist.app.databinding.ProductDetailBinding
@@ -36,7 +35,7 @@ class ProductDetail : Fragment(), View.OnClickListener {
     var orderDetails: HashMap<String, String> = HashMap<String, String>()
     var productAdapter: productImagesAdapter? = null
 
-
+    var quantity: String = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -107,6 +106,11 @@ class ProductDetail : Fragment(), View.OnClickListener {
                     bind.shortDescription.text =
                         dataSnapshot.child("short_description").value.toString()
                 }
+
+                if (dataSnapshot.hasChild("quantity")) {
+                    quantity =
+                        dataSnapshot.child("quantity").value.toString()
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -125,13 +129,31 @@ class ProductDetail : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.addToCart -> {
-                val timestamp =
-                    SimpleDateFormat("yyyyMMddHHmmssmsms").format(Date()) + Random().nextInt(
-                        1000000)
-                orderDetails["id"] = args.productID
+                if (quantity.toInt() > 0) {
+                    myCart?.orderByChild("id")?.equalTo(args.productID)
+                        ?.addValueEventListener(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                if (snapshot.exists()){
+                                    mToast(requireContext(),"Already added to cart")
+                                }else{
+                                    val timestamp =
+                                        SimpleDateFormat("yyyyMMddHHmmssmsms").format(Date()) + Random().nextInt(
+                                            1000000)
+                                    orderDetails["id"] = args.productID
 
-                myCart?.child(timestamp)?.setValue(orderDetails)?.addOnSuccessListener {
-                    mToast(requireContext(), "Added to cart")
+                                    myCart?.child(timestamp)?.setValue(orderDetails)?.addOnSuccessListener {
+                                        mToast(requireContext(), "Added to cart")
+                                    }
+                                }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+
+                            }
+
+                        })
+                } else {
+                    mToast(requireContext(), "Item out of stock")
                 }
 
             }
