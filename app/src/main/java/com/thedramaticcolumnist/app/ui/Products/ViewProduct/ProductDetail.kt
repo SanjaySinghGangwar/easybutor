@@ -133,17 +133,19 @@ class ProductDetail : Fragment(), View.OnClickListener {
                     myCart?.orderByChild("id")?.equalTo(args.productID)
                         ?.addValueEventListener(object : ValueEventListener {
                             override fun onDataChange(snapshot: DataSnapshot) {
-                                if (snapshot.exists()){
-                                    mToast(requireContext(),"Already added to cart")
-                                }else{
+                                if (snapshot.exists()) {
+                                    mToast(requireContext(), "Already added to cart")
+                                } else {
                                     val timestamp =
                                         SimpleDateFormat("yyyyMMddHHmmssmsms").format(Date()) + Random().nextInt(
                                             1000000)
                                     orderDetails["id"] = args.productID
+                                    orderDetails["quantity"] = "1"
 
-                                    myCart?.child(timestamp)?.setValue(orderDetails)?.addOnSuccessListener {
-                                        mToast(requireContext(), "Added to cart")
-                                    }
+                                    myCart?.child(timestamp)?.setValue(orderDetails)
+                                        ?.addOnSuccessListener {
+                                            mToast(requireContext(), "Added to cart")
+                                        }
                                 }
                             }
 

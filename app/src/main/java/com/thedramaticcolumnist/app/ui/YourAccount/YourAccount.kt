@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -84,6 +85,7 @@ class YourAccount : Fragment(), View.OnClickListener {
                         Glide.with(requireContext())
                             .load(imageUrl)
                             .placeholder(R.drawable.ic_person)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .into(bind.image);
                     }
                 }

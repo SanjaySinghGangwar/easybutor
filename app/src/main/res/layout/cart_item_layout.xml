@@ -43,6 +43,7 @@
 
 
                 <TextView
+                    android:drawableStart="@drawable/ic_rupee"
                     android:id="@+id/price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -58,10 +59,19 @@
                     android:text="Name"
                     android:textStyle="bold" />
 
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Quantity"
+                    android:textStyle="bold" />
+
                 <Spinner
                     android:id="@+id/quantity"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:entries="@array/number" />
             </LinearLayout>
 
             <ImageView
@@ -79,13 +89,14 @@
 
 
             <TextView
+                android:id="@+id/saveForLater"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/grey"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="Save for later"
+                android:text="Update"
                 android:textColor="@color/white" />
 
             <TextView

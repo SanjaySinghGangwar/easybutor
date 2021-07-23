@@ -8,11 +8,17 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.thedramaticcolumnist.app.Database.mDatabase.myCart
 import com.thedramaticcolumnist.app.Model.ProductModel
+import com.thedramaticcolumnist.app.Model.cart
 import com.thedramaticcolumnist.app.R
+import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.CartBinding
 import com.thedramaticcolumnist.app.databinding.CartItemLayoutBinding
@@ -21,9 +27,13 @@ import com.thedramaticcolumnist.app.mViewHolder.CartViewHolder
 
 class Cart : Fragment(), View.OnClickListener {
 
+    private var quantity: String = "1"
     private lateinit var cartViewModel: CartViewModel
     private var _binding: CartBinding? = null
     private val bind get() = _binding!!
+    lateinit var recyclerAdapter: FirebaseRecyclerAdapter<ProductModel, CartViewHolder>
+
+    var cartList = ArrayList<cart>()
 
     companion object {
         fun newInstance() = Cart()
@@ -50,6 +60,7 @@ class Cart : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        showLoader()
         initAllComponent()
         showCartData()
     }
@@ -60,8 +71,9 @@ class Cart : Fragment(), View.OnClickListener {
             FirebaseRecyclerOptions.Builder<ProductModel>()
                 .setQuery(myCart!!, ProductModel::class.java)
                 .build()
-        val recyclerAdapter =
-            object : FirebaseRecyclerAdapter<ProductModel, CartViewHolder>(option) {
+        recyclerAdapter =
+            object : FirebaseRecyclerAdapter<ProductModel, CartViewHolder>(option),
+                CartViewHolder.ItemListener {
                 override fun onCreateViewHolder(
                     parent: ViewGroup,
                     viewType: Int,
@@ -70,7 +82,7 @@ class Cart : Fragment(), View.OnClickListener {
                         CartItemLayoutBinding.inflate(LayoutInflater.from(parent.context),
                             parent,
                             false)
-                    return CartViewHolder(requireContext(), binding)
+                    return CartViewHolder(requireContext(), binding, this)
                 }
 
                 override fun onBindViewHolder(
@@ -78,18 +90,35 @@ class Cart : Fragment(), View.OnClickListener {
                     position: Int,
                     model: ProductModel,
                 ) {
-
+                    hideLoader()
                     holder.bind(model)
+                    cartList.add(cart(model.id, model.quantity))
+                    val node = getRef(position).key.toString()
                     holder.remove.setOnClickListener {
-
-                        myCart!!.child(getRef(position).key.toString()).removeValue()
+                        myCart!!.child(node).removeValue()
                             .addOnSuccessListener {
                                 mToast(requireContext(), "Removed")
                                 notifyDataSetChanged()
                             }
 
                     }
+                    holder.saveForLater.setOnClickListener {
+                        myCart?.child(node)?.child("quantity")
+                            ?.setValue(getQuantity())
+                            ?.addOnFailureListener {
+                                mToast(requireContext(), it.message.toString())
+                            }?.addOnSuccessListener {
+                                mToast(requireContext(), "added")
+                            }
+                    }
 
+
+                }
+
+
+
+                override fun onPayClicked(arrayListt: ArrayList<cart>) {
+                    cartList = arrayListt
                 }
 
 
@@ -98,10 +127,16 @@ class Cart : Fragment(), View.OnClickListener {
 
         bind.recycler.adapter = recyclerAdapter
         recyclerAdapter.startListening()
+
+    }
+
+    private fun getQuantity(): String {
+        return quantity
     }
 
     private fun initAllComponent() {
         bind.clearCart.setOnClickListener(this)
+        bind.pay.setOnClickListener(this)
     }
 
 
@@ -130,6 +165,18 @@ class Cart : Fragment(), View.OnClickListener {
                 }?.addOnFailureListener {
                     mToast(requireContext(), it.message.toString())
                 }
+            }
+            R.id.pay -> {
+                myCart?.addValueEventListener(object :ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+                })
+                mLog(cartList.toString())
             }
         }
     }

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 import com.thedramaticcolumnist.app.Model.SliderData;
 import com.thedramaticcolumnist.app.R;
@@ -45,6 +46,7 @@ public class SliderAdapter extends SliderViewAdapter<SliderAdapter.SliderAdapter
         Glide.with(viewHolder.itemView)
                 .load(sliderItem.getImgUrl())
                 .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(viewHolder.imageViewBackground);
     }
 

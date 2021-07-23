@@ -13,6 +13,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -83,6 +84,7 @@ class HomeScreen : AppCompatActivity() {
                     Glide.with(this@HomeScreen)
                         .load(snapshot.child("profile_image").value.toString())
                         .placeholder(R.drawable.ic_person)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(header.findViewById(R.id.imageView))
                 }
 

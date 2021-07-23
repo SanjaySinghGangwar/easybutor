@@ -36,7 +36,7 @@
             android:layout_weight="1"
             android:background="@color/grey"
             android:gravity="center"
-            android:padding="10dp"
+            android:padding="15dp"
             android:text="Clear cart"
             android:textColor="@color/white" />
 
@@ -47,7 +47,7 @@
             android:layout_weight="1"
             android:background="@color/amazon"
             android:gravity="center"
-            android:padding="10dp"
+            android:padding="15dp"
             android:text="Proceed to pay"
             android:textColor="@color/white" />
     </LinearLayout>

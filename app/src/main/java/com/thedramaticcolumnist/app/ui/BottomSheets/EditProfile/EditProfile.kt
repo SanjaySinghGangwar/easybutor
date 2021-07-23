@@ -12,6 +12,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -56,6 +57,7 @@ class EditProfile(private val name: String, private val phone: String, private v
         Glide.with(requireContext())
             .load(image!!)
             .placeholder(R.drawable.ic_person)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(bind.image)
         bind.update.setOnClickListener(this)
         bind.image.setOnClickListener(this)
@@ -112,6 +114,7 @@ class EditProfile(private val name: String, private val phone: String, private v
                     Glide.with(requireContext())
                         .load(data!!.data)
                         .placeholder(R.drawable.ic_person)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(bind.image)
                     saveProductImage(data.data)
                 }
