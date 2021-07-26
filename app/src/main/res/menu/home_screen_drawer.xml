@@ -39,5 +39,9 @@
             android:icon="@drawable/ic_customer_service"
             android:title="@string/menu_customer_service"
             android:visible="false" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_account"
+            android:title="@string/logout" />
     </group>
 </menu>

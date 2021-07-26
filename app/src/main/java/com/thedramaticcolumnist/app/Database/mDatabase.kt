@@ -18,5 +18,7 @@ object mDatabase {
             .child(it)
     }
 
-    var productDatabase=FirebaseDatabase.getInstance().reference.child("Products")
+    var productDatabase = FirebaseDatabase.getInstance().reference.child("Products")
+
+    var mAddress = myProfile?.child("address")
 }

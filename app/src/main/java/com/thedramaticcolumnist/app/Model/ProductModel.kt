@@ -14,5 +14,12 @@ data class ProductModel(
     var name: String? = "",
     var icon: String? = "",
     var id: String? = "",
+    var city: String? = "",
+    var full_name: String? = "",
+    var house_address: String? = "",
+    var phone: String? = "",
+    var pinCode: String? = "",
+    var road_address: String? = "",
+    var state: String? = "",
 
 )

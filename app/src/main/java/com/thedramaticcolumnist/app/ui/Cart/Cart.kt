@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -167,16 +168,7 @@ class Cart : Fragment(), View.OnClickListener {
                 }
             }
             R.id.pay -> {
-                myCart?.addValueEventListener(object :ValueEventListener{
-                    override fun onDataChange(snapshot: DataSnapshot) {
-
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-
-                    }
-                })
-                mLog(cartList.toString())
+                view?.findNavController()?.navigate(R.id.cart_to_address)
             }
         }
     }

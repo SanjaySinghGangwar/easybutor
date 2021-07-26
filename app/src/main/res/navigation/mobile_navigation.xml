@@ -10,24 +10,27 @@
         android:name="com.thedramaticcolumnist.app.ui.home.HomeFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_home">
-        <action app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
-            app:popEnterAnim="@android:anim/fade_in"
-            app:popExitAnim="@android:anim/fade_out"
+        <action
             android:id="@+id/home_to_cart"
-            app:destination="@id/cart" />
-        <action app:enterAnim="@android:anim/fade_in"
+            app:destination="@id/cart"
+            app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
-            app:popExitAnim="@android:anim/fade_out"
+            app:popExitAnim="@android:anim/fade_out" />
+        <action
             android:id="@+id/home_to_CategoryProducts"
-            app:destination="@id/viewCategoryProducts" />
-        <action app:enterAnim="@android:anim/fade_in"
+            app:destination="@id/viewCategoryProducts"
+            app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
-            app:popExitAnim="@android:anim/fade_out"
+            app:popExitAnim="@android:anim/fade_out" />
+        <action
             android:id="@+id/home_to_search"
-            app:destination="@id/search2" />
+            app:destination="@id/search2"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
 
     <fragment
@@ -55,13 +58,14 @@
         android:id="@+id/nav_category"
         android:name="com.thedramaticcolumnist.app.ui.Category.CategoryFragment"
         android:label="@string/menu_category"
-        tools:layout="@layout/category_fragment" >
-        <action app:enterAnim="@android:anim/fade_in"
+        tools:layout="@layout/category_fragment">
+        <action
+            android:id="@+id/action_nav_category_to_viewCategoryProducts"
+            app:destination="@id/viewCategoryProducts"
+            app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
-            app:popExitAnim="@android:anim/fade_out"
-            android:id="@+id/action_nav_category_to_viewCategoryProducts"
-            app:destination="@id/viewCategoryProducts" />
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/nav_distributor"
@@ -73,18 +77,23 @@
         android:name="com.thedramaticcolumnist.app.ui.Products.ProductsFragment"
         android:label="@string/menu_products"
         tools:layout="@layout/products_fragment">
-        <action app:enterAnim="@android:anim/fade_in"
+        <action
+            android:id="@+id/products_to_productDetail"
+            app:destination="@id/productDetail"
+            app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
-            app:popExitAnim="@android:anim/fade_out"
-            android:id="@+id/products_to_productDetail"
-            app:destination="@id/productDetail" />
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/cart"
         android:name="com.thedramaticcolumnist.app.ui.Cart.Cart"
         android:label="Cart"
-        tools:layout="@layout/cart" />
+        tools:layout="@layout/cart">
+        <action
+            android:id="@+id/cart_to_address"
+            app:destination="@id/address2" />
+    </fragment>
     <fragment
         android:id="@+id/productDetail"
         android:name="com.thedramaticcolumnist.app.ui.Products.ViewProduct.ProductDetail"
@@ -98,29 +107,35 @@
         android:id="@+id/viewCategoryProducts"
         android:name="com.thedramaticcolumnist.app.ui.ViewCategoryProducts.ViewCategoryProducts"
         android:label="View Category Products"
-        tools:layout="@layout/view_category_products" >
+        tools:layout="@layout/view_category_products">
         <argument
             android:name="category"
             app:argType="string" />
-        <action app:enterAnim="@android:anim/fade_in"
+        <action
+            android:id="@+id/action_viewCategoryProducts_to_productDetail"
+            app:destination="@id/productDetail"
+            app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
-            app:popExitAnim="@android:anim/fade_out"
-            android:id="@+id/action_viewCategoryProducts_to_productDetail"
-            app:destination="@id/productDetail" />
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/search2"
         android:name="com.thedramaticcolumnist.app.ui.Search.Search"
         android:label="Search"
-        tools:layout="@layout/search" >
-        <action app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
-            app:popEnterAnim="@android:anim/fade_in"
-            app:popExitAnim="@android:anim/fade_out"
-
+        tools:layout="@layout/search">
+        <action
             android:id="@+id/search_to_productDetail"
             app:destination="@id/productDetail"
-             />
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
     </fragment>
+    <fragment
+        android:id="@+id/address2"
+        android:name="com.thedramaticcolumnist.app.ui.address.Address"
+        android:label="Select a address"
+        tools:layout="@layout/address" />
 </navigation>

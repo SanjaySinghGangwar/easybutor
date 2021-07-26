@@ -22,7 +22,7 @@ import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.HomeScreenBinding
 
-class HomeScreen : AppCompatActivity() {
+class HomeScreen : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var bind: HomeScreenBinding
@@ -61,6 +61,8 @@ class HomeScreen : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         setUpProfileData()
+
+        navView.setNavigationItemSelectedListener(this)
     }
 
     private fun initAllComponents() {
@@ -98,6 +100,7 @@ class HomeScreen : AppCompatActivity() {
 
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.home_screen, menu)
         return true
@@ -109,7 +112,8 @@ class HomeScreen : AppCompatActivity() {
                 navController.navigateUp()
                 navController.navigate(R.id.home_to_cart)
 
-            }R.id.search -> {
+            }
+            R.id.search -> {
                 navController.navigateUp()
                 navController.navigate(R.id.home_to_search)
 
@@ -122,4 +126,14 @@ class HomeScreen : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_home_screen)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_logout -> {
+
+            }
+        }
+        return true
+    }
+
 }
