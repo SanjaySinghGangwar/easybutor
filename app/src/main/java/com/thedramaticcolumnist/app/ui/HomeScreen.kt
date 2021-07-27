@@ -1,5 +1,6 @@
 package com.thedramaticcolumnist.app.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -130,7 +131,10 @@ class HomeScreen : AppCompatActivity(), NavigationView.OnNavigationItemSelectedL
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_logout -> {
-
+                FirebaseAuth.getInstance().signOut()
+                intent = Intent(this, SplashScreen::class.java)
+                startActivity(intent)
+                finishAffinity()
             }
         }
         return true

@@ -18,6 +18,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
+                tools:listitem="@layout/show_address"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:layout_width="match_parent"

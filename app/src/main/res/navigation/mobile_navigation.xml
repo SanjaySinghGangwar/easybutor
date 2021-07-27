@@ -137,5 +137,18 @@
         android:id="@+id/address2"
         android:name="com.thedramaticcolumnist.app.ui.address.Address"
         android:label="Select a address"
-        tools:layout="@layout/address" />
+        tools:layout="@layout/address" >
+        <action
+            android:id="@+id/address_to_confirmOrder"
+            app:destination="@id/confirmOrder" />
+    </fragment>
+    <fragment
+        android:id="@+id/confirmOrder"
+        android:name="com.thedramaticcolumnist.app.ui.ConfirmOrder.ConfirmOrder"
+        android:label="Confirm Order"
+        tools:layout="@layout/confirm_order" >
+        <argument
+            android:name="addressID"
+            app:argType="string" />
+    </fragment>
 </navigation>

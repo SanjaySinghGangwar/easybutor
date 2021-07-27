@@ -19,19 +19,12 @@ import com.thedramaticcolumnist.app.databinding.CartItemLayoutBinding
 class CartViewHolder(
     private val context: Context,
     private val itemBinding: CartItemLayoutBinding,
-    private val listener: ItemListener,
 ) : RecyclerView.ViewHolder(itemBinding.root) {
 
     private lateinit var items: ProductModel
     var card: CardView = itemBinding.card
-    var quantity = itemBinding.quantity
     var remove = itemBinding.remove
     var saveForLater = itemBinding.saveForLater
-    var totalAmount: Int = 0
-
-    interface ItemListener {
-        fun onPayClicked(arrayListt: ArrayList<cart>)
-    }
 
     fun bind(item: ProductModel) {
         this.items = item
@@ -51,7 +44,7 @@ class CartViewHolder(
                         snapshot.child("short_description").value.toString()
                 }
                 if (snapshot.hasChild("price") && snapshot.hasChild("quantity")) {
-                    ///itemBinding.price.text = snapshot.child("price").value.toString()
+
                     val price = snapshot.child("price").value.toString()
                     val quan = items.quantity?.toInt()
                     val total = (price.toInt() * quan!!)

@@ -9,17 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import com.firebase.ui.common.ChangeEventType
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.thedramaticcolumnist.app.Database.mDatabase.myCart
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.Model.cart
 import com.thedramaticcolumnist.app.R
-import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.CartBinding
 import com.thedramaticcolumnist.app.databinding.CartItemLayoutBinding
@@ -39,8 +34,6 @@ class Cart : Fragment(), View.OnClickListener {
     companion object {
         fun newInstance() = Cart()
     }
-
-    private lateinit var viewModel: CartViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,8 +66,7 @@ class Cart : Fragment(), View.OnClickListener {
                 .setQuery(myCart!!, ProductModel::class.java)
                 .build()
         recyclerAdapter =
-            object : FirebaseRecyclerAdapter<ProductModel, CartViewHolder>(option),
-                CartViewHolder.ItemListener {
+            object : FirebaseRecyclerAdapter<ProductModel, CartViewHolder>(option) {
                 override fun onCreateViewHolder(
                     parent: ViewGroup,
                     viewType: Int,
@@ -83,7 +75,7 @@ class Cart : Fragment(), View.OnClickListener {
                         CartItemLayoutBinding.inflate(LayoutInflater.from(parent.context),
                             parent,
                             false)
-                    return CartViewHolder(requireContext(), binding, this)
+                    return CartViewHolder(requireContext(), binding)
                 }
 
                 override fun onBindViewHolder(
@@ -114,12 +106,6 @@ class Cart : Fragment(), View.OnClickListener {
                     }
 
 
-                }
-
-
-
-                override fun onPayClicked(arrayListt: ArrayList<cart>) {
-                    cartList = arrayListt
                 }
 
 

@@ -29,8 +29,6 @@ class productImagesAdapter(private val context: Context, private val splitString
             .error(R.drawable.ic_default_product)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(holder.imageView);
-
-        mLog(splitString[position])
     }
 
     override fun getItemCount(): Int {

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.thedramaticcolumnist.app.Database.mDatabase.mAddress
@@ -14,6 +15,7 @@ import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.AddressBinding
 import com.thedramaticcolumnist.app.databinding.ShowAddressBinding
 import com.thedramaticcolumnist.app.ui.BottomSheets.addAddress.AddAddress
+import com.thedramaticcolumnist.app.ui.Products.ProductsFragmentDirections
 
 
 class Address : Fragment(), View.OnClickListener {
@@ -73,6 +75,10 @@ class Address : Fragment(), View.OnClickListener {
                     model: ProductModel,
                 ) {
                     holder.bind(model)
+                    holder.card.setOnClickListener{
+                        val action = AddressDirections.addressToConfirmOrder(getRef(position).key.toString())
+                        view?.findNavController()?.navigate(action)
+                    }
                     holder.delete.setOnClickListener { click ->
                         mAddress!!.child(getRef(position).key.toString()).removeValue()
                             .addOnSuccessListener {

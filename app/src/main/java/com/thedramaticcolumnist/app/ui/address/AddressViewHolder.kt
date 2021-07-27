@@ -1,7 +1,6 @@
 package com.thedramaticcolumnist.app.ui.address
 
 import android.content.Context
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.databinding.ShowAddressBinding
@@ -12,7 +11,7 @@ class AddressViewHolder(
 ) : RecyclerView.ViewHolder(bind.root) {
 
     private lateinit var items: ProductModel
-    var card: CardView = bind.card
+    var card = bind.card
     var delete = bind.delete
     var edit = bind.edit
 
