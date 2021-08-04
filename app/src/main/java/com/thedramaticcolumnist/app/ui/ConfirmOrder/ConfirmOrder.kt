@@ -11,22 +11,22 @@ import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.thedramaticcolumnist.app.Database.mDatabase
 import com.thedramaticcolumnist.app.Database.mDatabase.mAddress
 import com.thedramaticcolumnist.app.Database.mDatabase.myCart
-import com.thedramaticcolumnist.app.Database.mDatabase.productDatabase
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.Model.cart
 import com.thedramaticcolumnist.app.R
+import com.thedramaticcolumnist.app.Utils.mUtils
 import com.thedramaticcolumnist.app.Utils.mUtils.hideLoader
 import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.Utils.mUtils.showLoader
-import com.thedramaticcolumnist.app.databinding.CartItemLayoutBinding
+import com.thedramaticcolumnist.app.databinding.ComfirmOrderLayoutBinding
 import com.thedramaticcolumnist.app.databinding.ConfirmOrderBinding
-import com.thedramaticcolumnist.app.mViewHolder.CartViewHolder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
+import com.thedramaticcolumnist.app.mViewHolder.ComfirmOrderViewHolder
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ConfirmOrder : Fragment(), View.OnClickListener {
@@ -42,8 +42,9 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
     var state = ""
     val arrayList = ArrayList<cart>()
 
-    lateinit var recyclerAdapter: FirebaseRecyclerAdapter<ProductModel, CartViewHolder>
+    lateinit var recyclerAdapter: FirebaseRecyclerAdapter<ProductModel, ComfirmOrderViewHolder>
 
+    var listChild = HashMap<String, HashMap<String, String>>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,27 +69,33 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
                 .setQuery(myCart!!, ProductModel::class.java)
                 .build()
         recyclerAdapter =
-            object : FirebaseRecyclerAdapter<ProductModel, CartViewHolder>(option) {
+            object : FirebaseRecyclerAdapter<ProductModel, ComfirmOrderViewHolder>(option),
+                ComfirmOrderViewHolder.ItemListener {
                 override fun onCreateViewHolder(
                     parent: ViewGroup,
                     viewType: Int,
-                ): CartViewHolder {
-                    val binding: CartItemLayoutBinding =
-                        CartItemLayoutBinding.inflate(LayoutInflater.from(parent.context),
+                ): ComfirmOrderViewHolder {
+                    val binding: ComfirmOrderLayoutBinding =
+                        ComfirmOrderLayoutBinding.inflate(LayoutInflater.from(parent.context),
                             parent,
                             false)
-                    return CartViewHolder(requireContext(), binding)
+                    return ComfirmOrderViewHolder(requireContext(), binding, listChild, this)
                 }
 
                 override fun onBindViewHolder(
-                    holder: CartViewHolder,
+                    holder: ComfirmOrderViewHolder,
                     position: Int,
                     model: ProductModel,
                 ) {
+
                     hideLoader(bind.progressBar)
                     holder.bind(model)
                     arrayList.add(cart(model.id, model.quantity))
 
+                }
+
+                override fun onClicked(uid: HashMap<String, HashMap<String, String>>) {
+                    listChild = uid
                 }
             }
         bind.recycler.adapter = recyclerAdapter
@@ -138,31 +145,15 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.proceed -> {
-
+                mLog(listChild.toString())
+                mDatabase.myOrder!!.setValue(listChild)
+                    .addOnSuccessListener {
+                        mLog("DONE")
+                    }
             }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        for (i in arrayList.indices) {
-            CoroutineScope(IO).launch {
-                productDatabase.child(arrayList[i].toString())
-                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            for (postSnapshot in snapshot.children) {
-                                mLog(postSnapshot.toString())
-                                mToast(requireContext(), postSnapshot.toString())
-                            }
-                        }
 
-                        override fun onCancelled(error: DatabaseError) {
-                            mToast(requireContext(), error.message)
-                        }
-                    })
-            }
-
-        }
-    }
 }
 

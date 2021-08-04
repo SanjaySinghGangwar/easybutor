@@ -6,13 +6,11 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.auth.FirebaseAuth
@@ -59,7 +57,6 @@ class YourAccount : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         initAllComponent()
         fetchProfileData()
-        //loadUrl("https://thedramaticcolumnist.com/login/")
     }
 
     private fun fetchProfileData() {
@@ -68,7 +65,7 @@ class YourAccount : Fragment(), View.OnClickListener {
             .child(FirebaseAuth.getInstance().currentUser?.uid.toString())
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if(bind.progressBar.visibility== VISIBLE){
+                    if (bind.progressBar.visibility == VISIBLE) {
                         bind.progressBar.visibility = GONE
                     }
                     bind.edit.visibility = VISIBLE
@@ -91,7 +88,7 @@ class YourAccount : Fragment(), View.OnClickListener {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    if(bind.progressBar.visibility== VISIBLE){
+                    if (bind.progressBar.visibility == VISIBLE) {
                         bind.progressBar.visibility = GONE
                     }
                     bind.edit.visibility = VISIBLE
@@ -103,39 +100,9 @@ class YourAccount : Fragment(), View.OnClickListener {
     private fun initAllComponent() {
         bind.edit.setOnClickListener(this)
         bind.logout.setOnClickListener(this)
+        bind.address.setOnClickListener(this)
 
     }
-
-
-    fun loadUrl(url: String) {
-        val settings: WebSettings = bind.webView.getSettings()
-        settings.domStorageEnabled = true
-
-        bind.webView.requestFocus();
-        bind.webView.settings.lightTouchEnabled = true;
-        bind.webView.settings.javaScriptEnabled = true;
-        bind.webView.settings.setGeolocationEnabled(true);
-        bind.webView.isSoundEffectsEnabled = true;
-        bind.webView.settings.setAppCacheEnabled(true);
-        bind.webView.loadUrl(url);
-        bind.webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                view.loadUrl(url)
-                bind.progressBar.visibility = View.VISIBLE
-                return true
-            }
-
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-            }
-
-            override fun onPageCommitVisible(view: WebView?, url: String?) {
-                super.onPageCommitVisible(view, url)
-                bind.progressBar.visibility = View.GONE
-            }
-        }
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -155,6 +122,9 @@ class YourAccount : Fragment(), View.OnClickListener {
             R.id.logout -> {
                 val logout = Logout()
                 logout.show(parentFragmentManager, "")
+            }
+            R.id.address -> {
+                view?.findNavController()?.navigate(R.id.account_to_address)
             }
         }
     }

@@ -20,7 +20,6 @@ class CategoryViewHolder(
 
     fun bind(item: ProductModel) {
         this.items = item
-        Log.i("SANJAY ", "bind: $items")
         itemBinding.name.text = item.name
         Glide.with(context).load(item.icon).diskCacheStrategy(DiskCacheStrategy.ALL).into(itemBinding.image);
     }

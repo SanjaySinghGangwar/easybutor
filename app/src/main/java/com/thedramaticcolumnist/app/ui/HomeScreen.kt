@@ -23,7 +23,7 @@ import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.HomeScreenBinding
 
-class HomeScreen : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class HomeScreen : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var bind: HomeScreenBinding
@@ -63,7 +63,6 @@ class HomeScreen : AppCompatActivity(), NavigationView.OnNavigationItemSelectedL
 
         setUpProfileData()
 
-        navView.setNavigationItemSelectedListener(this)
     }
 
     private fun initAllComponents() {
@@ -128,16 +127,5 @@ class HomeScreen : AppCompatActivity(), NavigationView.OnNavigationItemSelectedL
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.nav_logout -> {
-                FirebaseAuth.getInstance().signOut()
-                intent = Intent(this, SplashScreen::class.java)
-                startActivity(intent)
-                finishAffinity()
-            }
-        }
-        return true
-    }
 
 }

@@ -48,7 +48,11 @@
         android:id="@+id/nav_account"
         android:name="com.thedramaticcolumnist.app.ui.YourAccount.YourAccount"
         android:label="@string/menu_account"
-        tools:layout="@layout/your_account_fragment" />
+        tools:layout="@layout/your_account_fragment" >
+        <action
+            android:id="@+id/account_to_address"
+            app:destination="@id/address2" />
+    </fragment>
     <fragment
         android:id="@+id/nav_customer_service"
         android:name="com.thedramaticcolumnist.app.ui.CustomerService.CustomerService"
@@ -69,9 +73,9 @@
     </fragment>
     <fragment
         android:id="@+id/nav_distributor"
-        android:name="com.thedramaticcolumnist.app.ui.Distributor.DistributerFragment"
+        android:name="com.thedramaticcolumnist.app.ui.Distributor.MyAddress"
         android:label="@string/menu_distributor"
-        tools:layout="@layout/distributer_fragment" />
+        tools:layout="@layout/my_address" />
     <fragment
         android:id="@+id/nav_products"
         android:name="com.thedramaticcolumnist.app.ui.Products.ProductsFragment"
