@@ -52,6 +52,9 @@
         <action
             android:id="@+id/account_to_address"
             app:destination="@id/address2" />
+        <action
+            android:id="@+id/account_to_wishlist"
+            app:destination="@id/nav_wishlist" />
     </fragment>
     <fragment
         android:id="@+id/nav_customer_service"
@@ -106,6 +109,9 @@
         <argument
             android:name="productID"
             app:argType="string" />
+        <action
+            android:id="@+id/productDetail_to_address"
+            app:destination="@id/address2" />
     </fragment>
     <fragment
         android:id="@+id/viewCategoryProducts"

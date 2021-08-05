@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.Products.ViewProduct.ProductDetail">
 
     <androidx.core.widget.NestedScrollView
@@ -17,13 +17,26 @@
             android:orientation="vertical"
             android:weightSum="10">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/product_image_layout"
+            <com.smarteist.autoimageslider.SliderView
+                android:id="@+id/slider"
                 android:layout_width="match_parent"
-                android:layout_height="300dp" />
+                android:layout_height="450dp"
+                android:layout_centerInParent="true"
 
+                android:layout_marginTop="10dp"
+
+                app:sliderAnimationDuration="1000"
+                app:sliderAutoCycleDirection="back_and_forth"
+                app:sliderIndicatorAnimationDuration="1000"
+                app:sliderIndicatorEnabled="true"
+                app:sliderIndicatorGravity="center_horizontal|bottom"
+                app:sliderIndicatorMargin="15dp"
+                app:sliderIndicatorOrientation="horizontal"
+                app:sliderIndicatorPadding="3dp"
+                app:sliderIndicatorRadius="2dp"
+                app:sliderIndicatorSelectedColor="@color/amazon"
+                app:sliderIndicatorUnselectedColor="@color/grey"
+                app:sliderScrollTimeInSec="2" />
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
@@ -112,12 +125,70 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/mrp"
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+                        <TextView
+                            android:id="@+id/price"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="4"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Discount" />
+
+                        <TextView
+                            android:id="@+id/discount"
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
                 <TextView
-                    android:id="@+id/price"
+                    android:id="@+id/wishlist"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+                    android:text="Add to wishlist"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    android:textColor="@color/green"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/longDescription"

@@ -3,6 +3,7 @@ package com.thedramaticcolumnist.app.ui.Cart
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -45,16 +46,11 @@ class Cart : Fragment(), View.OnClickListener {
         _binding = CartBinding.inflate(inflater, container, false)
         val root: View = bind.root
 
-        val textView: TextView = bind.textView
-        cartViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showLoader()
         initAllComponent()
         showCartData()
     }
@@ -83,7 +79,8 @@ class Cart : Fragment(), View.OnClickListener {
                     position: Int,
                     model: ProductModel,
                 ) {
-                    hideLoader()
+                    bind.temp.visibility=INVISIBLE
+                    bind.list.visibility= VISIBLE
                     holder.bind(model)
                     cartList.add(cart(model.id, model.quantity))
                     val node = getRef(position).key.toString()
@@ -130,18 +127,6 @@ class Cart : Fragment(), View.OnClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    fun showLoader() {
-        if (bind.progressBar.visibility == View.GONE) {
-            bind.progressBar.visibility = View.VISIBLE
-        }
-    }
-
-    fun hideLoader() {
-        if (bind.progressBar.visibility == View.VISIBLE) {
-            bind.progressBar.visibility = View.GONE
-        }
     }
 
     override fun onClick(v: View?) {

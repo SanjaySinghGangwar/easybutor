@@ -3,7 +3,6 @@ package com.thedramaticcolumnist.app.ui.YourAccount
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
@@ -65,9 +64,6 @@ class YourAccount : Fragment(), View.OnClickListener {
             .child(FirebaseAuth.getInstance().currentUser?.uid.toString())
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if (bind.progressBar.visibility == VISIBLE) {
-                        bind.progressBar.visibility = GONE
-                    }
                     bind.edit.visibility = VISIBLE
                     if (snapshot.hasChild("name")) {
                         bind.name.text =
@@ -88,9 +84,6 @@ class YourAccount : Fragment(), View.OnClickListener {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    if (bind.progressBar.visibility == VISIBLE) {
-                        bind.progressBar.visibility = GONE
-                    }
                     bind.edit.visibility = VISIBLE
                     mToast(requireContext(), error.message)
                 }
@@ -101,6 +94,7 @@ class YourAccount : Fragment(), View.OnClickListener {
         bind.edit.setOnClickListener(this)
         bind.logout.setOnClickListener(this)
         bind.address.setOnClickListener(this)
+        bind.wishlist.setOnClickListener(this)
 
     }
 
@@ -126,7 +120,9 @@ class YourAccount : Fragment(), View.OnClickListener {
             R.id.address -> {
                 view?.findNavController()?.navigate(R.id.account_to_address)
             }
+            R.id.wishlist -> {
+                view?.findNavController()?.navigate(R.id.account_to_wishlist)
+            }
         }
     }
-
 }

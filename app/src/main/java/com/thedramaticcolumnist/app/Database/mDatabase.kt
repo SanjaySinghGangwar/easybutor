@@ -13,6 +13,11 @@ object mDatabase {
         FirebaseDatabase.getInstance().reference.child("Easybutor")
             .child(it).child("cart")
     }
+
+    var mWishList = FirebaseAuth.getInstance().currentUser?.uid?.let {
+        FirebaseDatabase.getInstance().reference.child("Easybutor")
+            .child(it).child("wishlist")
+    }
     var myOrder = FirebaseAuth.getInstance().currentUser?.uid?.let {
         FirebaseDatabase.getInstance().reference.child("Easybutor")
             .child(it).child("order")
@@ -25,4 +30,5 @@ object mDatabase {
     var productDatabase = FirebaseDatabase.getInstance().reference.child("Products")
 
     var mAddress = myProfile?.child("address")
+
 }
