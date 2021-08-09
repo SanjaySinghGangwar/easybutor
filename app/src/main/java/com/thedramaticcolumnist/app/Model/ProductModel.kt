@@ -21,5 +21,6 @@ data class ProductModel(
     var pinCode: String? = "",
     var road_address: String? = "",
     var state: String? = "",
+    var amount: String? = "",
 
 )

@@ -4,23 +4,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.thedramaticcolumnist.app.Database.mDatabase.myOrder
+import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.databinding.OrderFragmentBinding
+import com.thedramaticcolumnist.app.databinding.OrderItemLayoutBinding
+import com.thedramaticcolumnist.app.mViewHolder.OrderViewHolder
 
 class OrderFragment : Fragment() {
 
     private lateinit var orderViewModel: OrderViewModel
     private var _binding: OrderFragmentBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val bind get() = _binding!!
+    lateinit var recyclerAdapter: FirebaseRecyclerAdapter<ProductModel, OrderViewHolder>
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,50 +34,56 @@ class OrderFragment : Fragment() {
         _binding = OrderFragmentBinding.inflate(inflater, container, false)
         val root: View = bind.root
 
-        val textView: TextView = bind.textView
-        orderViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
+
         return root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAllComponent()
-        loadUrl("https://thedramaticcolumnist.com/my-account/orders/")
+        showCartData()
     }
-
     private fun initAllComponent() {
 
     }
+    private fun showCartData() {
 
-    fun loadUrl(url: String) {
-        val settings: WebSettings =bind. webView.getSettings()
-        settings.domStorageEnabled = true
+        val option: FirebaseRecyclerOptions<ProductModel> =
+            FirebaseRecyclerOptions.Builder<ProductModel>()
+                .setQuery(myOrder!!, ProductModel::class.java)
+                .build()
+        recyclerAdapter =
+            object : FirebaseRecyclerAdapter<ProductModel, OrderViewHolder>(option) {
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    viewType: Int,
+                ): OrderViewHolder {
+                    val binding: OrderItemLayoutBinding =
+                        OrderItemLayoutBinding.inflate(LayoutInflater.from(parent.context),
+                            parent,
+                            false)
+                    return OrderViewHolder(requireContext(), binding)
+                }
 
+                override fun onBindViewHolder(
+                    holder: OrderViewHolder,
+                    position: Int,
+                    model: ProductModel,
+                ) {
+                    bind.temp.visibility= View.INVISIBLE
+                    bind.list.visibility= View.VISIBLE
 
-        bind.webView.requestFocus();
-        bind.webView.settings.lightTouchEnabled = true;
-        bind.webView.settings.javaScriptEnabled = true;
-        bind.webView.settings.setGeolocationEnabled(true);
-        bind.webView.isSoundEffectsEnabled = true;
-        bind.webView.settings.setAppCacheEnabled(true);
-        bind.webView.loadUrl(url);
-        bind.webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                view.loadUrl(url)
-                bind.progressBar.visibility = View.VISIBLE
-                return true
+                    holder.bind(getRef(position).key.toString())
+                    holder.card.setOnClickListener{
+                        val action = OrderFragmentDirections.orderToOrderDetail(getRef(position).key.toString())
+                        view?.findNavController()?.navigate(action)
+                    }
+
+                }
             }
 
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-            }
+        bind.recycler.adapter = recyclerAdapter
+        recyclerAdapter.startListening()
 
-            override fun onPageCommitVisible(view: WebView?, url: String?) {
-                super.onPageCommitVisible(view, url)
-                bind.progressBar.visibility = View.GONE
-            }
-        }
     }
 
     override fun onDestroyView() {

@@ -109,12 +109,12 @@ class HomeScreen : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.cart -> {
-                navController.navigateUp()
+                //navController.navigateUp()
                 navController.navigate(R.id.home_to_cart)
 
             }
             R.id.search -> {
-                navController.navigateUp()
+                //navController.navigateUp()
                 navController.navigate(R.id.home_to_search)
 
             }

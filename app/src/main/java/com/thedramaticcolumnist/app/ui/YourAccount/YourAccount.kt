@@ -95,6 +95,7 @@ class YourAccount : Fragment(), View.OnClickListener {
         bind.logout.setOnClickListener(this)
         bind.address.setOnClickListener(this)
         bind.wishlist.setOnClickListener(this)
+        bind.orders.setOnClickListener(this)
 
     }
 
@@ -122,6 +123,8 @@ class YourAccount : Fragment(), View.OnClickListener {
             }
             R.id.wishlist -> {
                 view?.findNavController()?.navigate(R.id.account_to_wishlist)
+            } R.id.orders -> {
+                view?.findNavController()?.navigate(R.id.account_to_nav_order)
             }
         }
     }

@@ -37,7 +37,15 @@
         android:id="@+id/nav_order"
         android:name="com.thedramaticcolumnist.app.ui.Order.OrderFragment"
         android:label="@string/menu_gallery"
-        tools:layout="@layout/order_fragment" />
+        tools:layout="@layout/order_fragment" >
+        <action
+            android:id="@+id/order_to_orderDetail"
+            app:destination="@id/orderDetail"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_wishlist"
@@ -50,11 +58,26 @@
         android:label="@string/menu_account"
         tools:layout="@layout/your_account_fragment" >
         <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             android:id="@+id/account_to_address"
             app:destination="@id/address2" />
         <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             android:id="@+id/account_to_wishlist"
             app:destination="@id/nav_wishlist" />
+        <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            android:id="@+id/account_to_nav_order"
+            app:destination="@id/nav_order" />
     </fragment>
     <fragment
         android:id="@+id/nav_customer_service"
@@ -98,6 +121,10 @@
         android:label="Cart"
         tools:layout="@layout/cart">
         <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             android:id="@+id/cart_to_address"
             app:destination="@id/address2" />
     </fragment>
@@ -110,6 +137,10 @@
             android:name="productID"
             app:argType="string" />
         <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             android:id="@+id/productDetail_to_address"
             app:destination="@id/address2" />
     </fragment>
@@ -149,6 +180,10 @@
         android:label="Select a address"
         tools:layout="@layout/address" >
         <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             android:id="@+id/address_to_confirmOrder"
             app:destination="@id/confirmOrder" />
     </fragment>
@@ -159,6 +194,15 @@
         tools:layout="@layout/confirm_order" >
         <argument
             android:name="addressID"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetail"
+        android:name="com.thedramaticcolumnist.app.ui.orderDetail.OrderDetail"
+        android:label="order_detail"
+        tools:layout="@layout/order_detail" >
+        <argument
+            android:name="id"
             app:argType="string" />
     </fragment>
 </navigation>

@@ -13,6 +13,7 @@ import com.thedramaticcolumnist.app.Database.mDatabase.mWishList
 import com.thedramaticcolumnist.app.Database.mDatabase.myCart
 import com.thedramaticcolumnist.app.Model.SliderData
 import com.thedramaticcolumnist.app.R
+import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.ProductDetailBinding
 import com.thedramaticcolumnist.app.ui.home.SliderAdapter
@@ -54,10 +55,11 @@ class ProductDetail : Fragment(), View.OnClickListener {
 
 
     }
+
     private fun setUpSlider() {
         val sliderDataArrayList: ArrayList<SliderData> = ArrayList()
         val sliderView: SliderView = bind.slider
-        for(i in splitString.indices){
+        for (i in splitString.indices) {
             sliderDataArrayList.add(SliderData(splitString[i]))
         }
 
@@ -69,6 +71,7 @@ class ProductDetail : Fragment(), View.OnClickListener {
         sliderView.isAutoCycle = true
         sliderView.startAutoCycle()
     }
+
     private fun initAllComponent() {
         database = FirebaseDatabase.getInstance()
         myRef = database.getReference("Products")
@@ -128,7 +131,8 @@ class ProductDetail : Fragment(), View.OnClickListener {
                     val price = dataSnapshot.child("price").value.toString()
                     val mrp = dataSnapshot.child("mrp").value.toString()
                     bind.discount.text =
-                        100.minus((price.toFloat() / mrp.toFloat()) * 100).roundToInt().toString()+" %"
+                        100.minus((price.toFloat() / mrp.toFloat()) * 100).roundToInt()
+                            .toString() + " %"
                 }
             }
 
@@ -142,7 +146,12 @@ class ProductDetail : Fragment(), View.OnClickListener {
     }
 
     private fun stringToArray(images: String) {
-        splitString = images.split(",") as ArrayList<String>
+        try {
+            splitString = images.split(",") as ArrayList<String>
+        } catch (e: Exception) {
+            mLog(e.message.toString())
+        }
+
     }
 
     override fun onClick(v: View?) {
@@ -212,4 +221,8 @@ class ProductDetail : Fragment(), View.OnClickListener {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

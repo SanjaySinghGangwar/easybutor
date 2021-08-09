@@ -17,7 +17,6 @@ import com.thedramaticcolumnist.app.Database.mDatabase.myCart
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.Model.cart
 import com.thedramaticcolumnist.app.R
-import com.thedramaticcolumnist.app.Utils.mUtils
 import com.thedramaticcolumnist.app.Utils.mUtils.hideLoader
 import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
@@ -25,6 +24,7 @@ import com.thedramaticcolumnist.app.Utils.mUtils.showLoader
 import com.thedramaticcolumnist.app.databinding.ComfirmOrderLayoutBinding
 import com.thedramaticcolumnist.app.databinding.ConfirmOrderBinding
 import com.thedramaticcolumnist.app.mViewHolder.ComfirmOrderViewHolder
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -146,9 +146,19 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.proceed -> {
                 mLog(listChild.toString())
-                mDatabase.myOrder!!.setValue(listChild)
+                mDatabase.myOrder!!.child(SimpleDateFormat("yyyyMMddHHmmssmsms").format(Date()) + Random().nextInt(
+                    1000000)).setValue(listChild)
                     .addOnSuccessListener {
-                        mLog("DONE")
+                        //sendNotification()
+                        //CreateNodeForSeller
+
+
+                        mLog(listChild["seller"].toString())
+                        //Empty card and redirect to thanks page
+                       /* myCart!!.removeValue().addOnSuccessListener {
+                            mLog("Done")
+
+                        }*/
                     }
             }
         }
