@@ -14,6 +14,7 @@ import com.google.firebase.database.ValueEventListener
 import com.thedramaticcolumnist.app.Database.mDatabase
 import com.thedramaticcolumnist.app.Database.mDatabase.mAddress
 import com.thedramaticcolumnist.app.Database.mDatabase.myCart
+import com.thedramaticcolumnist.app.FCM.Notification.sendNotification
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.Model.cart
 import com.thedramaticcolumnist.app.R
@@ -152,7 +153,7 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
                         //sendNotification()
                         //CreateNodeForSeller
 
-
+                        sendNotification("Order","Order Received","fCx5flcGSJy81N-7e0P6Q4:APA91bHb6fwEO-1TUyA1YQMbPTyPsbO00M8N5l5HbsQTt_BBz1THDRETFhsRVkD0sVVb6eWfpaJMkyA53W-zs9TtzHAX5oo74SBDlQSdnrOjbwecOJT3Qbt-lal_jksxIeDV3GsY05s2",requireContext())
                         mLog(listChild["seller"].toString())
                         //Empty card and redirect to thanks page
                        /* myCart!!.removeValue().addOnSuccessListener {
