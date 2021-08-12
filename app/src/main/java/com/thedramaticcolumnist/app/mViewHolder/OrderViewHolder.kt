@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.thedramaticcolumnist.app.Database.mDatabase.myOrder
+import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
@@ -23,9 +24,19 @@ class OrderViewHolder(
     var card: CardView = bind.card
 
 
-    fun bind(item: String) {
+    fun bind(item: ProductModel) {
+        bind.name.text=item.product_name
+        bind.price.text=item.price
+        bind.shortDescription.text=item.short_description
+        bind.quantity.text=item.quantity
+
+        Glide.with(context)
+            .load(item.image_one)
+            .placeholder(R.drawable.ic_person)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(bind.image)
         //mLog(item)
-        myOrder!!.child(item).addValueEventListener(object : ValueEventListener {
+       /* myOrder!!.child(item).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val data = snapshot.value.toString()
                 mLog(data.substring(1, data.indexOf("=")))
@@ -71,7 +82,7 @@ class OrderViewHolder(
             override fun onCancelled(error: DatabaseError) {
                 mToast(context, error.message)
             }
-        })
+        })*/
 
         /*mDatabase.productDatabase.child(item.id.toString()).addValueEventListener(object :
             ValueEventListener {

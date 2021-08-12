@@ -17,6 +17,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.thedramaticcolumnist.app.Database.mDatabase.mDatabase
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.YourAccountFragmentBinding
@@ -59,7 +60,7 @@ class YourAccount : Fragment(), View.OnClickListener {
     }
 
     private fun fetchProfileData() {
-        FirebaseDatabase.getInstance().reference
+        mDatabase
             .child(getString(R.string.app_name))
             .child(FirebaseAuth.getInstance().currentUser?.uid.toString())
             .addValueEventListener(object : ValueEventListener {

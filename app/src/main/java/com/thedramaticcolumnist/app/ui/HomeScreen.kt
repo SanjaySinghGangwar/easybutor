@@ -19,6 +19,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.thedramaticcolumnist.app.Database.mDatabase.mDatabase
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.HomeScreenBinding
@@ -67,7 +68,7 @@ class HomeScreen : AppCompatActivity() {
 
     private fun initAllComponents() {
         firebaseDatabase =
-            FirebaseDatabase.getInstance().reference.child(getString(R.string.app_name)).child(
+            mDatabase.child(getString(R.string.app_name)).child(
                 FirebaseAuth.getInstance().currentUser?.uid.toString())
     }
 

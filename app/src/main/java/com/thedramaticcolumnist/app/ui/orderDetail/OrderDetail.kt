@@ -1,18 +1,22 @@
 package com.thedramaticcolumnist.app.ui.orderDetail
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.thedramaticcolumnist.app.Database.mDatabase.myOrder
 import com.thedramaticcolumnist.app.Model.ProductModel
+import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.OrderDetailBinding
-import com.thedramaticcolumnist.app.databinding.OrderDetailLayoutBinding
 import com.thedramaticcolumnist.app.mViewHolder.OrderDetailViewHolder
 
 
@@ -28,47 +32,38 @@ class OrderDetail : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         _binding = OrderDetailBinding.inflate(inflater, container, false)
-        return  bind.root
+        return bind.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAllComponents()
-        showCartData()
+        showOrderDetail()
     }
 
-
-    private fun showCartData() {
-
-        val option: FirebaseRecyclerOptions<ProductModel> =
-            FirebaseRecyclerOptions.Builder<ProductModel>()
-                .setQuery(myOrder!!.child(args.id), ProductModel::class.java)
-                .build()
-        recyclerAdapter =
-            object : FirebaseRecyclerAdapter<ProductModel, OrderDetailViewHolder>(option) {
-                override fun onCreateViewHolder(
-                    parent: ViewGroup,
-                    viewType: Int,
-                ): OrderDetailViewHolder {
-                    val binding: OrderDetailLayoutBinding =
-                        OrderDetailLayoutBinding.inflate(LayoutInflater.from(parent.context),
-                            parent,
-                            false)
-                    return OrderDetailViewHolder(requireContext(), binding)
-                }
-
-                override fun onBindViewHolder(
-                    holder: OrderDetailViewHolder,
-                    position: Int,
-                    model: ProductModel,
-                ) {
-                    holder.bind(model)
-                }
+    private fun showOrderDetail() {
+        myOrder.child(args.id).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                bind.address.text = snapshot.child("address").value.toString()
+                bind.price.text = snapshot.child("price").value.toString()
+                bind.date.text = snapshot.child("date").value.toString()
+                bind.name.text = snapshot.child("product_name").value.toString()
+                bind.orderID.text = snapshot.child("orderId").value.toString()
+                bind.quantity.text = snapshot.child("quantity").value.toString()
+                bind.sellerID.text = snapshot.child("seller").value.toString()
+                bind.shortDescription.text = snapshot.child("short_description").value.toString()
+                Glide.with(requireContext())
+                    .load(snapshot.child("image_one").value.toString())
+                    .placeholder(R.drawable.ic_default_product)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(bind.image);
             }
 
-        bind.recycler.adapter = recyclerAdapter
-        recyclerAdapter.startListening()
+            override fun onCancelled(error: DatabaseError) {
 
+            }
+
+        })
     }
 
     private fun initAllComponents() {

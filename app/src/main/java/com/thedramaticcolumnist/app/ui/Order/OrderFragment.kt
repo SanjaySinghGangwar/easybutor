@@ -10,6 +10,7 @@ import androidx.navigation.findNavController
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.thedramaticcolumnist.app.Database.mDatabase.myOrder
+import com.thedramaticcolumnist.app.Database.mDatabase.uID
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.databinding.OrderFragmentBinding
 import com.thedramaticcolumnist.app.databinding.OrderItemLayoutBinding
@@ -49,7 +50,7 @@ class OrderFragment : Fragment() {
 
         val option: FirebaseRecyclerOptions<ProductModel> =
             FirebaseRecyclerOptions.Builder<ProductModel>()
-                .setQuery(myOrder!!, ProductModel::class.java)
+                .setQuery(myOrder.orderByChild("buyer").equalTo(uID), ProductModel::class.java)
                 .build()
         recyclerAdapter =
             object : FirebaseRecyclerAdapter<ProductModel, OrderViewHolder>(option) {
@@ -72,7 +73,7 @@ class OrderFragment : Fragment() {
                     bind.temp.visibility= View.INVISIBLE
                     bind.list.visibility= View.VISIBLE
 
-                    holder.bind(getRef(position).key.toString())
+                    holder.bind(model)
                     holder.card.setOnClickListener{
                         val action = OrderFragmentDirections.orderToOrderDetail(getRef(position).key.toString())
                         view?.findNavController()?.navigate(action)

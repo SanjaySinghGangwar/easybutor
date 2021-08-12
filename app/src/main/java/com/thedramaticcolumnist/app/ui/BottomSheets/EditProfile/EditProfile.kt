@@ -17,6 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.thedramaticcolumnist.app.Database.mDatabase.mDatabase
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.PermissionUtil
 import com.thedramaticcolumnist.app.Utils.mUtils.isValidText
@@ -74,7 +75,7 @@ class EditProfile(private val name: String, private val phone: String, private v
                     if (hashMap["profile_image"].isNullOrEmpty()) {
                         hashMap["profile_image"] = image.toString()
                     }
-                    FirebaseDatabase.getInstance().reference.child(getString(R.string.app_name))
+                    mDatabase.child(getString(R.string.app_name))
                         .child(FirebaseAuth.getInstance().currentUser?.uid.toString())
                         .setValue(hashMap).addOnSuccessListener {
                             bind.progressBar.visibility = GONE

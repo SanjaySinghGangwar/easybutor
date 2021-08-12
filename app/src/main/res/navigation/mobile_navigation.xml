@@ -31,6 +31,9 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
+        <action
+            android:id="@+id/home_to_productDetail"
+            app:destination="@id/productDetail" />
     </fragment>
 
     <fragment
@@ -195,6 +198,9 @@
         <argument
             android:name="addressID"
             app:argType="string" />
+        <action
+            android:id="@+id/confirmOrder_to_home"
+            app:destination="@id/nav_home" />
     </fragment>
     <fragment
         android:id="@+id/orderDetail"

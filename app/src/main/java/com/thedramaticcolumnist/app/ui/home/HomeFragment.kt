@@ -17,12 +17,16 @@ import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.smarteist.autoimageslider.SliderView
+import com.thedramaticcolumnist.app.Database.mDatabase.productDatabase
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.Model.SliderData
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.CategoryLayoutBinding
 import com.thedramaticcolumnist.app.databinding.FragmentHomeBinding
+import com.thedramaticcolumnist.app.databinding.ProductLayoutBinding
 import com.thedramaticcolumnist.app.mViewHolder.CategoryViewHolder
+import com.thedramaticcolumnist.app.ui.Products.ProductsFragmentDirections
+import com.thedramaticcolumnist.app.ui.Products.ProductsViewHolder
 
 
 class HomeFragment : Fragment() {
@@ -66,6 +70,48 @@ class HomeFragment : Fragment() {
         setUpSlider()
         setUpCategory()
         setUpOffers()
+        setUpProducts()
+    }
+
+    private fun setUpProducts() {
+        showLoader()
+        val option: FirebaseRecyclerOptions<ProductModel> =
+            FirebaseRecyclerOptions.Builder<ProductModel>()
+                .setQuery(productDatabase.limitToFirst(10), ProductModel::class.java)
+                .build()
+        val recyclerAdapter =
+            object : FirebaseRecyclerAdapter<ProductModel, ProductsViewHolder>(option) {
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    viewType: Int,
+                ): ProductsViewHolder {
+                    val binding: ProductLayoutBinding =
+                        ProductLayoutBinding.inflate(LayoutInflater.from(parent.context),
+                            parent,
+                            false)
+                    return ProductsViewHolder(requireContext(), binding)
+                }
+
+                override fun onBindViewHolder(
+                    holder: ProductsViewHolder,
+                    position: Int,
+                    model: ProductModel,
+                ) {
+                    hideLoader()
+                    bind.progressBar.visibility = GONE
+                    holder.bind(model)
+                    holder.card.setOnClickListener {
+                        val action = HomeFragmentDirections.homeToProductDetail(getRef(position).key.toString())
+                        view?.findNavController()?.navigate(action)
+                    }
+
+                }
+
+
+            }
+
+        bind.productsRecycler.adapter = recyclerAdapter
+        recyclerAdapter.startListening()
     }
 
     private fun setUpOffers() {
@@ -173,6 +219,7 @@ class HomeFragment : Fragment() {
         myRef = database.reference
         bind.categoryRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
         bind.offersRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
+        bind.productsRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
     }
 
     override fun onDestroyView() {

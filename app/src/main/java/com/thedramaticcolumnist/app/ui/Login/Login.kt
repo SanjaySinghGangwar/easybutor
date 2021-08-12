@@ -13,6 +13,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+import com.thedramaticcolumnist.app.Database.mDatabase.mDatabase
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.isValidText
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
@@ -69,7 +70,7 @@ class Login : AppCompatActivity(), OnClickListener {
                         bind.password.text.toString().trim())
                         .addOnCompleteListener(this) { task ->
                             if (task.isSuccessful) {
-                                FirebaseDatabase.getInstance().reference.
+                                mDatabase.
                                 child(applicationContext.getString(R.string.app_name))
                                     .child(FirebaseAuth.getInstance().currentUser?.uid.toString())
                                     .child("token")

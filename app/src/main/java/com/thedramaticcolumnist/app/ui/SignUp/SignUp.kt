@@ -14,6 +14,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+import com.thedramaticcolumnist.app.Database.mDatabase.mDatabase
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.isValidText
 import com.thedramaticcolumnist.app.databinding.SignUpBinding
@@ -71,7 +72,7 @@ class SignUp : AppCompatActivity(), View.OnClickListener {
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "createUserWithEmail:success")
-                                FirebaseDatabase.getInstance().reference.
+                                mDatabase.
                                 child(applicationContext.getString(R.string.app_name))
                                     .child(FirebaseAuth.getInstance().currentUser?.uid.toString())
                                     .setValue(hashMap)

@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.thedramaticcolumnist.app.Database.mDatabase
+import com.thedramaticcolumnist.app.Database.mDatabase.uID
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils
@@ -16,12 +17,14 @@ import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.databinding.ComfirmOrderLayoutBinding
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 class ComfirmOrderViewHolder(
     private val context: Context,
     private val itemBinding: ComfirmOrderLayoutBinding,
     var listChild: HashMap<String, HashMap<String, String>>,
-    private val listener: ItemListener
+    private val listener: ItemListener,
+    private val address:String,
 ) : RecyclerView.ViewHolder(itemBinding.root) {
 
     private lateinit var items: ProductModel
@@ -29,6 +32,7 @@ class ComfirmOrderViewHolder(
 
     interface ItemListener {
         fun onClicked(uid:  HashMap<String, HashMap<String, String>>)
+        fun createOrder(orderHash:HashMap<String, String> )
     }
     fun bind(item: ProductModel) {
         this.items = item
@@ -64,7 +68,9 @@ class ComfirmOrderViewHolder(
                     hashMap["quantity"] = quan.toString()
                     hashMap["amount"] = amount.toString()
                 }
-
+                if (snapshot.hasChild("token") ) {
+                    hashMap["token"]= snapshot.child("token").value.toString()
+                }
                 if (snapshot.hasChild("image_one")) {
                     Glide.with(context)
                         .load(snapshot.child("image_one").value.toString())
@@ -78,6 +84,11 @@ class ComfirmOrderViewHolder(
                     SimpleDateFormat("yyyyMMddHHmmssmsms").format(Date()) + Random().nextInt(
                         1000000)
                 listChild[timestamp] = hashMap
+                hashMap["buyer"]=uID
+                hashMap["orderId"]=uID+timestamp
+                hashMap["date"]=SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date())
+                hashMap["address"]=address
+               listener. createOrder(hashMap)
 
             }
 

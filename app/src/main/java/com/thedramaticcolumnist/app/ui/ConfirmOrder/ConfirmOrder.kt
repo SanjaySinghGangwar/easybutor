@@ -5,29 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.thedramaticcolumnist.app.Database.mDatabase
+import com.thedramaticcolumnist.app.Database.mDatabase.createOrder
 import com.thedramaticcolumnist.app.Database.mDatabase.mAddress
 import com.thedramaticcolumnist.app.Database.mDatabase.myCart
-import com.thedramaticcolumnist.app.FCM.Notification.sendNotification
+import com.thedramaticcolumnist.app.FCM.NetworkUtil
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.Model.cart
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.hideLoader
-import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.Utils.mUtils.showLoader
 import com.thedramaticcolumnist.app.databinding.ComfirmOrderLayoutBinding
 import com.thedramaticcolumnist.app.databinding.ConfirmOrderBinding
 import com.thedramaticcolumnist.app.mViewHolder.ComfirmOrderViewHolder
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 class ConfirmOrder : Fragment(), View.OnClickListener {
@@ -42,6 +39,7 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
     var roadAddress = ""
     var state = ""
     val arrayList = ArrayList<cart>()
+    val orderList = ArrayList<HashMap<String, String>>()
 
     lateinit var recyclerAdapter: FirebaseRecyclerAdapter<ProductModel, ComfirmOrderViewHolder>
 
@@ -58,8 +56,9 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAllComponents()
-        showCartItems()
+
         setAddress()
+        showCartItems()
 
     }
 
@@ -80,7 +79,11 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
                         ComfirmOrderLayoutBinding.inflate(LayoutInflater.from(parent.context),
                             parent,
                             false)
-                    return ComfirmOrderViewHolder(requireContext(), binding, listChild, this)
+                    return ComfirmOrderViewHolder(requireContext(),
+                        binding,
+                        listChild,
+                        this,
+                        bind.address.text.toString())
                 }
 
                 override fun onBindViewHolder(
@@ -97,6 +100,10 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
 
                 override fun onClicked(uid: HashMap<String, HashMap<String, String>>) {
                     listChild = uid
+                }
+
+                override fun createOrder(orderHash: HashMap<String, String>) {
+                    orderList.add(orderHash)
                 }
             }
         bind.recycler.adapter = recyclerAdapter
@@ -142,25 +149,27 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
         bind.proceed.setOnClickListener(this)
     }
 
-
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.proceed -> {
-                mLog(listChild.toString())
-                mDatabase.myOrder!!.child(SimpleDateFormat("yyyyMMddHHmmssmsms").format(Date()) + Random().nextInt(
-                    1000000)).setValue(listChild)
-                    .addOnSuccessListener {
-                        //sendNotification()
-                        //CreateNodeForSeller
-
-                        sendNotification("Order","Order Received","fCx5flcGSJy81N-7e0P6Q4:APA91bHb6fwEO-1TUyA1YQMbPTyPsbO00M8N5l5HbsQTt_BBz1THDRETFhsRVkD0sVVb6eWfpaJMkyA53W-zs9TtzHAX5oo74SBDlQSdnrOjbwecOJT3Qbt-lal_jksxIeDV3GsY05s2",requireContext())
-                        mLog(listChild["seller"].toString())
-                        //Empty card and redirect to thanks page
-                       /* myCart!!.removeValue().addOnSuccessListener {
-                            mLog("Done")
-
-                        }*/
+                if (NetworkUtil.isOnline(requireContext())) {
+                    showLoader(bind.progressBar)
+                    for (i in orderList.indices) {
+                        createOrder(
+                            orderList[i],
+                            requireContext(),
+                            orderList[i]["token"].toString()
+                        )
+                        Thread.sleep(2000)
                     }
+
+                    hideLoader(bind.progressBar)
+                    mToast(requireContext(), "Order placed successfully")
+                    view?.findNavController()?.navigate(R.id.confirmOrder_to_home)
+
+                } else {
+                    mToast(requireContext(), "No internet connection")
+                }
             }
         }
     }
