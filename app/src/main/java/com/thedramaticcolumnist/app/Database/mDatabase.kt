@@ -27,10 +27,6 @@ object mDatabase {
             .child(it).child("wishlist")
     }
 
-    /*var myOrder = FirebaseAuth.getInstance().currentUser?.uid?.let {
-        mDatabase.child("Easybutor")
-            .child(it).child("order")
-    }*/
     var myProfile = FirebaseAuth.getInstance().currentUser?.uid?.let {
         mDatabase.child("Easybutor")
             .child(it)
@@ -66,4 +62,9 @@ object mDatabase {
     }
 
     var myOrder = mDatabase.child("Orders")
+
+    val urlOne=mDatabase.child("url1")
+    val urlTwo=mDatabase.child("url2")
+    val urlThree=mDatabase.child("url3")
+    val urlFour=mDatabase.child("url4")
 }

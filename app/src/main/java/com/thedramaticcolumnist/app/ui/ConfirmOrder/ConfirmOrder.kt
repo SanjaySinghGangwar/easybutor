@@ -17,6 +17,7 @@ import com.thedramaticcolumnist.app.Database.mDatabase.mAddress
 import com.thedramaticcolumnist.app.Database.mDatabase.myCart
 import com.thedramaticcolumnist.app.FCM.NetworkUtil
 import com.thedramaticcolumnist.app.Model.ProductModel
+import com.thedramaticcolumnist.app.Model.SharedPreference.mSharedPreference
 import com.thedramaticcolumnist.app.Model.cart
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.hideLoader
@@ -42,13 +43,13 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
     val orderList = ArrayList<HashMap<String, String>>()
 
     lateinit var recyclerAdapter: FirebaseRecyclerAdapter<ProductModel, ComfirmOrderViewHolder>
-
     var listChild = HashMap<String, HashMap<String, String>>()
+    private var sharedPreference: mSharedPreference? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         _binding = ConfirmOrderBinding.inflate(inflater, container, false)
         return bind.root
     }
@@ -93,7 +94,7 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
                 ) {
 
                     hideLoader(bind.progressBar)
-                    holder.bind(model)
+                    holder.bind(model, sharedPreference?.token)
                     arrayList.add(cart(model.id, model.quantity))
 
                 }
@@ -146,6 +147,7 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
     }
 
     private fun initAllComponents() {
+        sharedPreference = mSharedPreference(requireContext())
         bind.proceed.setOnClickListener(this)
     }
 
@@ -158,7 +160,7 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
                         createOrder(
                             orderList[i],
                             requireContext(),
-                            orderList[i]["token"].toString()
+                            orderList[i]["sellerToken"].toString()
                         )
                         Thread.sleep(2000)
                     }
@@ -173,7 +175,6 @@ class ConfirmOrder : Fragment(), View.OnClickListener {
             }
         }
     }
-
 
 }
 

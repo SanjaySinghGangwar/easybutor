@@ -14,6 +14,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.thedramaticcolumnist.app.Database.mDatabase.mDatabase
+import com.thedramaticcolumnist.app.Model.SharedPreference.mSharedPreference
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.isValidText
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
@@ -26,7 +27,7 @@ class Login : AppCompatActivity(), OnClickListener {
     private lateinit var bind: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
     private var token: String? = null
-
+    private var sharedPreference: mSharedPreference? = null
     private val TAG: String = "LOGIN"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +40,7 @@ class Login : AppCompatActivity(), OnClickListener {
     }
 
     private fun initAllComponents() {
+        sharedPreference = mSharedPreference(this)
         auth = Firebase.auth
         bind.signUp.setOnClickListener(this)
         bind.login.setOnClickListener(this)
@@ -51,6 +53,9 @@ class Login : AppCompatActivity(), OnClickListener {
                 return@OnCompleteListener
             }
             token = task.result
+            if (token != null) {
+                sharedPreference?.token = token
+            }
         })
     }
 

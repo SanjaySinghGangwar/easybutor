@@ -88,6 +88,7 @@ class HomeScreen : AppCompatActivity() {
                         .load(snapshot.child("profile_image").value.toString())
                         .placeholder(R.drawable.ic_person)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .error(R.drawable.ic_error)
                         .into(header.findViewById(R.id.imageView))
                 }
 
@@ -110,13 +111,23 @@ class HomeScreen : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.cart -> {
-                //navController.navigateUp()
-                navController.navigate(R.id.home_to_cart)
+                try{
+                    navController.navigate(R.id.cart)
+                }catch (e:Exception){
+                    navController.popBackStack()
+                    navController.navigate(R.id.card)
+                }
+
+
 
             }
             R.id.search -> {
-                //navController.navigateUp()
-                navController.navigate(R.id.home_to_search)
+                try{
+                    navController.navigate(R.id.search2)
+                }catch (e:Exception){
+                    navController.popBackStack()
+                    navController.navigate(R.id.search2)
+                }
 
             }
         }

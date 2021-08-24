@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.database.*
 import com.smarteist.autoimageslider.SliderView
@@ -16,7 +18,8 @@ import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.ProductDetailBinding
-import com.thedramaticcolumnist.app.ui.home.SliderAdapter
+import com.thedramaticcolumnist.app.adapter.SliderAdapter
+import com.thedramaticcolumnist.app.adapter.SliderAdapterProducts
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -52,8 +55,12 @@ class ProductDetail : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         initAllComponent()
         fetchProductDetail()
+        setUpToolbar()
 
+    }
 
+    private fun setUpToolbar() {
+        (activity as AppCompatActivity).supportActionBar?.title = ""
     }
 
     private fun setUpSlider() {
@@ -63,7 +70,9 @@ class ProductDetail : Fragment(), View.OnClickListener {
             sliderDataArrayList.add(SliderData(splitString[i]))
         }
 
-        val adapter = SliderAdapter(requireContext(), sliderDataArrayList)
+        val adapter = SliderAdapterProducts(
+            requireContext(),
+            sliderDataArrayList)
 
         sliderView.autoCycleDirection = SliderView.LAYOUT_DIRECTION_LTR
         sliderView.setSliderAdapter(adapter)
@@ -79,6 +88,7 @@ class ProductDetail : Fragment(), View.OnClickListener {
 
         bind.addToCart.setOnClickListener(this)
         bind.wishlist.setOnClickListener(this)
+        bind.buyNow.setOnClickListener(this)
 
         bind.mrp.paintFlags = bind.mrp.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
     }
@@ -94,8 +104,6 @@ class ProductDetail : Fragment(), View.OnClickListener {
                     images = dataSnapshot.child("image").value.toString()
                     stringToArray(images.substring(1, images.length - 1));
                     setUpSlider()
-
-
                 }
 
                 if (dataSnapshot.hasChild("long_description")) {
@@ -107,7 +115,8 @@ class ProductDetail : Fragment(), View.OnClickListener {
                 }
                 if (dataSnapshot.hasChild("product_name")) {
                     bind.name.text = dataSnapshot.child("product_name").value.toString()
-
+                    (activity as AppCompatActivity).supportActionBar?.title =
+                        dataSnapshot.child("product_name").value.toString()
 
                 }
                 if (dataSnapshot.hasChild("seller")) {
@@ -156,36 +165,11 @@ class ProductDetail : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
+            R.id.buyNow -> {
+                addToCard(true)
+            }
             R.id.addToCart -> {
-                if (quantity.toInt() > 0) {
-                    myCart?.orderByChild("id")?.equalTo(args.productID)
-                        ?.addValueEventListener(object : ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                if (snapshot.exists()) {
-                                    mToast(requireContext(), "Already added to cart")
-                                } else {
-                                    val timestamp =
-                                        SimpleDateFormat("yyyyMMddHHmmssmsms").format(Date()) + Random().nextInt(
-                                            1000000)
-                                    orderDetails["id"] = args.productID
-                                    orderDetails["quantity"] = "1"
-
-                                    myCart?.child(timestamp)?.setValue(orderDetails)
-                                        ?.addOnSuccessListener {
-                                            mToast(requireContext(), "Added to cart")
-                                        }
-                                }
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-
-                            }
-
-                        })
-                } else {
-                    mToast(requireContext(), "Item out of stock")
-                }
-
+                addToCard(false)
             }
             R.id.wishlist -> {
                 if (quantity.toInt() > 0) {
@@ -218,6 +202,43 @@ class ProductDetail : Fragment(), View.OnClickListener {
                 }
 
             }
+        }
+    }
+
+    private fun addToCard(flags: Boolean) {
+        if (quantity.toInt() > 0) {
+            myCart?.orderByChild("id")?.equalTo(args.productID)
+                ?.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()) {
+                            mToast(requireContext(), "Already added to cart")
+                            if(flags){
+                                view?.findNavController()?.navigate(R.id.productDetail_to_cart)
+                            }
+                        } else {
+                            val timestamp =
+                                SimpleDateFormat("yyyyMMddHHmmssmsms").format(Date()) + Random().nextInt(
+                                    1000000)
+                            orderDetails["id"] = args.productID
+                            orderDetails["quantity"] = "1"
+
+                            myCart?.child(timestamp)?.setValue(orderDetails)
+                                ?.addOnSuccessListener {
+                                    mToast(requireContext(), "Added to cart")
+                                    if(flags){
+                                        view?.findNavController()?.navigate(R.id.productDetail_to_cart)
+                                    }
+                                }
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+
+                    }
+
+                })
+        } else {
+            mToast(requireContext(), "Item out of stock")
         }
     }
 

@@ -13,7 +13,6 @@ import com.thedramaticcolumnist.app.Database.mDatabase.uID
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils
-import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.databinding.ComfirmOrderLayoutBinding
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,7 +33,7 @@ class ComfirmOrderViewHolder(
         fun onClicked(uid:  HashMap<String, HashMap<String, String>>)
         fun createOrder(orderHash:HashMap<String, String> )
     }
-    fun bind(item: ProductModel) {
+    fun bind(item: ProductModel, token: String?) {
         this.items = item
         itemBinding.quantity.text = items.quantity
         var amount = 0
@@ -68,14 +67,15 @@ class ComfirmOrderViewHolder(
                     hashMap["quantity"] = quan.toString()
                     hashMap["amount"] = amount.toString()
                 }
-                if (snapshot.hasChild("token") ) {
-                    hashMap["token"]= snapshot.child("token").value.toString()
+                if (snapshot.hasChild("sellerToken") ) {
+                    hashMap["sellerToken"]= snapshot.child("sellerToken").value.toString()
                 }
                 if (snapshot.hasChild("image_one")) {
                     Glide.with(context)
                         .load(snapshot.child("image_one").value.toString())
                         .placeholder(R.drawable.ic_person)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .error(R.drawable.ic_error)
                         .into(itemBinding.image);
                     hashMap["image_one"] = snapshot.child("image_one").value.toString()
                 }
@@ -88,6 +88,7 @@ class ComfirmOrderViewHolder(
                 hashMap["orderId"]=uID+timestamp
                 hashMap["date"]=SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date())
                 hashMap["address"]=address
+                hashMap["buyerToken"]=token.toString()
                listener. createOrder(hashMap)
 
             }

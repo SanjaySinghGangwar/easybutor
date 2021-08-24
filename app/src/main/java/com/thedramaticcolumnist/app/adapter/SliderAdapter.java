@@ -1,4 +1,4 @@
-package com.thedramaticcolumnist.app.ui.home;
+package com.thedramaticcolumnist.app.adapter;
 
 
 import android.content.Context;
@@ -47,6 +47,7 @@ public class SliderAdapter extends SliderViewAdapter<SliderAdapter.SliderAdapter
                 .load(sliderItem.getImgUrl())
                 .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .error(R.drawable.ic_error)
                 .into(viewHolder.imageViewBackground);
     }
 

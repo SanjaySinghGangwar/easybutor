@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.thedramaticcolumnist.app.Model.ProductModel
+import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.databinding.CategoryLayoutBinding
 
 class CategoryViewHolder(
@@ -21,6 +22,6 @@ class CategoryViewHolder(
     fun bind(item: ProductModel) {
         this.items = item
         itemBinding.name.text = item.name
-        Glide.with(context).load(item.icon).diskCacheStrategy(DiskCacheStrategy.ALL).into(itemBinding.image);
+        Glide.with(context).load(item.icon).diskCacheStrategy(DiskCacheStrategy.ALL).error(R.drawable.ic_error).into(itemBinding.image);
     }
 }

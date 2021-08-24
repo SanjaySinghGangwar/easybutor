@@ -3,11 +3,10 @@ package com.thedramaticcolumnist.app.ui.Cart
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.*
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.firebase.ui.database.FirebaseRecyclerAdapter
@@ -79,8 +78,8 @@ class Cart : Fragment(), View.OnClickListener {
                     position: Int,
                     model: ProductModel,
                 ) {
-                    bind.temp.visibility=INVISIBLE
-                    bind.list.visibility= VISIBLE
+                    bind.temp.visibility = INVISIBLE
+                    bind.list.visibility = VISIBLE
                     holder.bind(model)
                     cartList.add(cart(model.id, model.quantity))
                     val node = getRef(position).key.toString()

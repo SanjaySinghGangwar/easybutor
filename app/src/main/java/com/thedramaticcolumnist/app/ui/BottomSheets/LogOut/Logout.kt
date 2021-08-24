@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
+import com.thedramaticcolumnist.app.Model.SharedPreference.mSharedPreference
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.databinding.LogoutBinding
 import com.thedramaticcolumnist.app.ui.SplashScreen
@@ -16,6 +17,7 @@ class Logout : BottomSheetDialogFragment(), View.OnClickListener {
 
     private var _binding: LogoutBinding? = null
     private val bind get() = _binding!!
+    private var sharedPreference: mSharedPreference? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,6 +33,7 @@ class Logout : BottomSheetDialogFragment(), View.OnClickListener {
     }
 
     private fun initAllComponent() {
+        sharedPreference = mSharedPreference(requireContext())
         bind.cancel.setOnClickListener(this)
         bind.ok.setOnClickListener(this)
     }
@@ -39,6 +42,7 @@ class Logout : BottomSheetDialogFragment(), View.OnClickListener {
         when (v?.id) {
             R.id.ok -> {
                 FirebaseAuth.getInstance().signOut()
+                sharedPreference?.clearAllPreferences()
                 val intent = Intent(requireContext(), SplashScreen::class.java)
                 startActivity(intent)
             }

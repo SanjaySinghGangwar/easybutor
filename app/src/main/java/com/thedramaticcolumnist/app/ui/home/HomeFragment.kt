@@ -20,12 +20,11 @@ import com.smarteist.autoimageslider.SliderView
 import com.thedramaticcolumnist.app.Database.mDatabase.productDatabase
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.Model.SliderData
-import com.thedramaticcolumnist.app.Utils.mUtils.mToast
+import com.thedramaticcolumnist.app.adapter.SliderAdapter
 import com.thedramaticcolumnist.app.databinding.CategoryLayoutBinding
 import com.thedramaticcolumnist.app.databinding.FragmentHomeBinding
 import com.thedramaticcolumnist.app.databinding.ProductLayoutBinding
 import com.thedramaticcolumnist.app.mViewHolder.CategoryViewHolder
-import com.thedramaticcolumnist.app.ui.Products.ProductsFragmentDirections
 import com.thedramaticcolumnist.app.ui.Products.ProductsViewHolder
 
 
@@ -205,7 +204,9 @@ class HomeFragment : Fragment() {
         sliderDataArrayList.add(SliderData(url3))
         sliderDataArrayList.add(SliderData(url4))
 
-        val adapter = SliderAdapter(requireContext(), sliderDataArrayList)
+        val adapter = SliderAdapter(
+            requireContext(),
+            sliderDataArrayList)
 
         sliderView.autoCycleDirection = SliderView.LAYOUT_DIRECTION_LTR
         sliderView.setSliderAdapter(adapter)

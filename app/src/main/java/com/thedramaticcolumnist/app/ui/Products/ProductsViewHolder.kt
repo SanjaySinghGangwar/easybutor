@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.thedramaticcolumnist.app.Model.ProductModel
+import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.databinding.ProductLayoutBinding
 
 class ProductsViewHolder(
@@ -20,10 +21,8 @@ class ProductsViewHolder(
 
     fun bind(item: ProductModel) {
         this.items = item
-        Log.i("SANJAY ", "bind: $items")
-
         itemBinding.name.text = item.product_name
         itemBinding.price.text = "₹ " + item.price
-        Glide.with(context).load(item.image_one).diskCacheStrategy(DiskCacheStrategy.ALL).into(itemBinding.image);
+        Glide.with(context).load(item.image_one).diskCacheStrategy(DiskCacheStrategy.ALL) .error(R.drawable.ic_error).into(itemBinding.image);
     }
 }

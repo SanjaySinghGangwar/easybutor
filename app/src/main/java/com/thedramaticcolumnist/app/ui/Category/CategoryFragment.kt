@@ -17,7 +17,6 @@ import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.databinding.CategoryFragmentBinding
 import com.thedramaticcolumnist.app.databinding.CategoryLayoutBinding
 import com.thedramaticcolumnist.app.mViewHolder.CategoryViewHolder
-import com.thedramaticcolumnist.app.ui.home.HomeFragmentDirections
 
 
 class CategoryFragment : Fragment() {
@@ -56,6 +55,7 @@ class CategoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initAllComponents()
         setUpCategory()
+
     }
 
 
@@ -65,6 +65,7 @@ class CategoryFragment : Fragment() {
         bind.categoryRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
 
     }
+
     private fun setUpCategory() {
         showLoader()
         val option: FirebaseRecyclerOptions<ProductModel> =
@@ -92,18 +93,11 @@ class CategoryFragment : Fragment() {
                     hideLoader()
                     holder.bind(model)
                     holder.card.setOnClickListener {
-                        val action = CategoryFragmentDirections.actionNavCategoryToViewCategoryProducts(model.name.toString())
+                        val action =
+                            CategoryFragmentDirections.actionNavCategoryToViewCategoryProducts(model.name.toString())
                         view?.findNavController()?.navigate(action)
                     }
-                    /* holder.card.setOnClickListener {
-                         //mToast(requireContext(), getRef(position).key.toString())
-                         val action = ProductsFragmentDirections.productsToProductDetail(getRef(position).key.toString())
-                         view?.findNavController()?.navigate(action)
-                     }*/
-
                 }
-
-
             }
 
         bind.categoryRecycler.adapter = recyclerAdapter
@@ -115,6 +109,7 @@ class CategoryFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
     fun showLoader() {
         if (bind.progressBar.visibility == View.GONE) {
             bind.progressBar.visibility = View.VISIBLE

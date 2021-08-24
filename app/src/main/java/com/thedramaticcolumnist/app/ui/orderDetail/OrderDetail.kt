@@ -15,6 +15,7 @@ import com.google.firebase.database.ValueEventListener
 import com.thedramaticcolumnist.app.Database.mDatabase.myOrder
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.R
+import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.OrderDetailBinding
 import com.thedramaticcolumnist.app.mViewHolder.OrderDetailViewHolder
@@ -39,6 +40,7 @@ class OrderDetail : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initAllComponents()
         showOrderDetail()
+        fetchRealTimeStatusOfOrder()
     }
 
     private fun showOrderDetail() {
@@ -56,6 +58,7 @@ class OrderDetail : Fragment() {
                     .load(snapshot.child("image_one").value.toString())
                     .placeholder(R.drawable.ic_default_product)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .error(R.drawable.ic_error)
                     .into(bind.image);
             }
 
@@ -65,7 +68,42 @@ class OrderDetail : Fragment() {
 
         })
     }
+    private fun fetchRealTimeStatusOfOrder() {
+        try {
+            myOrder.child(args.id).child("Status")
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.hasChild("flag")) {
+                            if (snapshot.hasChild("flag"))
+                                bind.status.text = snapshot.child("flag").value.toString()
 
+                            if (snapshot.child("flag").value.toString() == "Waiting for Shipment detail") {
+                                bind.trackingLayout.visibility = View.VISIBLE
+                                bind.shippedLayout.visibility = View.VISIBLE
+                                bind.buttonText.text = "UPDATE"
+                            } else if (snapshot.child("flag").value.toString() == "In-Transit") {
+                                bind.trackingLayout.visibility = View.VISIBLE
+                                bind.shippedLayout.visibility = View.VISIBLE
+                                bind.buttonText.text = "UPDATE"
+
+                                bind.trackingNumber.setText(snapshot.child("trackingNumber").value.toString())
+                                bind.companyName.setText(snapshot.child("companyName").value.toString())
+                            }
+
+                        } else {
+                            bind.status.text = "Waiting for approval"
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        mToast(requireContext(), error.message)
+                    }
+
+                })
+        } catch (e: Exception) {
+            mLog("STATUS IS NOT THERE")
+        }
+    }
     private fun initAllComponents() {
 
     }

@@ -34,6 +34,7 @@ class OrderViewHolder(
             .load(item.image_one)
             .placeholder(R.drawable.ic_person)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .error(R.drawable.ic_error)
             .into(bind.image)
         //mLog(item)
        /* myOrder!!.child(item).addValueEventListener(object : ValueEventListener {

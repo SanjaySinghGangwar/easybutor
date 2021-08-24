@@ -44,7 +44,6 @@ class CartViewHolder(
                         snapshot.child("short_description").value.toString()
                 }
                 if (snapshot.hasChild("price") && snapshot.hasChild("quantity")) {
-
                     val price = snapshot.child("price").value.toString()
                     val quan = items.quantity?.toInt()
                     val total = (price.toInt() * quan!!)
@@ -58,6 +57,7 @@ class CartViewHolder(
                         .load(snapshot.child("image_one").value.toString())
                         .placeholder(R.drawable.ic_person)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .error(R.drawable.ic_error)
                         .into(itemBinding.image);
                 }
 

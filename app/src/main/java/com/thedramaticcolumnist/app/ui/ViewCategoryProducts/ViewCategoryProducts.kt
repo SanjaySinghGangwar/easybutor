@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -15,7 +16,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.databinding.ProductLayoutBinding
 import com.thedramaticcolumnist.app.databinding.ViewCategoryProductsBinding
-import com.thedramaticcolumnist.app.ui.Products.ProductsFragmentDirections
 import com.thedramaticcolumnist.app.ui.Products.ProductsViewHolder
 
 
@@ -41,7 +41,11 @@ class ViewCategoryProducts : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAllComponents()
+        setUpToolbar()
+    }
 
+    private fun setUpToolbar() {
+        (activity as AppCompatActivity).supportActionBar?.title = args.category
     }
 
 
@@ -67,7 +71,8 @@ class ViewCategoryProducts : Fragment() {
     private fun initRecycler() {
         val option: FirebaseRecyclerOptions<ProductModel> =
             FirebaseRecyclerOptions.Builder<ProductModel>()
-                .setQuery(myRef.orderByChild("category").equalTo(args.category), ProductModel::class.java)
+                .setQuery(myRef.orderByChild("category").equalTo(args.category),
+                    ProductModel::class.java)
                 .build()
         val recyclerAdapter =
             object : FirebaseRecyclerAdapter<ProductModel, ProductsViewHolder>(option) {
@@ -91,7 +96,8 @@ class ViewCategoryProducts : Fragment() {
                     holder.card.setOnClickListener {
                         //mToast(requireContext(), getRef(position).key.toString())
                         val action =
-                            ViewCategoryProductsDirections.actionViewCategoryProductsToProductDetail(getRef(position).key.toString())
+                            ViewCategoryProductsDirections.actionViewCategoryProductsToProductDetail(
+                                getRef(position).key.toString())
                         view?.findNavController()?.navigate(action)
                     }
 

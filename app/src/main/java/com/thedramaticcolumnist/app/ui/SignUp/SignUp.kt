@@ -11,10 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.thedramaticcolumnist.app.Database.mDatabase.mDatabase
+import com.thedramaticcolumnist.app.Model.SharedPreference.mSharedPreference
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.isValidText
 import com.thedramaticcolumnist.app.databinding.SignUpBinding
@@ -27,7 +27,7 @@ class SignUp : AppCompatActivity(), View.OnClickListener {
     private lateinit var bind: SignUpBinding
     private lateinit var auth: FirebaseAuth
 
-
+    private var sharedPreference: mSharedPreference? = null
     private val TAG: String = "SIGN UP"
     var hashMap: HashMap<String, String> = HashMap()
 
@@ -47,10 +47,14 @@ class SignUp : AppCompatActivity(), View.OnClickListener {
                 return@OnCompleteListener
             }
             token = task.result
+            if (token != null) {
+                sharedPreference?.token = token
+            }
         })
     }
 
     private fun initAllComponents() {
+        sharedPreference = mSharedPreference(this)
         auth = Firebase.auth
         bind.signUp.setOnClickListener(this)
     }
@@ -63,8 +67,8 @@ class SignUp : AppCompatActivity(), View.OnClickListener {
                         bind.email) && isValidText(bind.password.text.toString().trim(),
                         bind.password)
                 ) {
-                    hashMap["name"]=bind.name.text.toString().trim()
-                    hashMap["token"]= token.toString()
+                    hashMap["name"] = bind.name.text.toString().trim()
+                    hashMap["token"] = token.toString()
                     bind.progressBar.visibility = VISIBLE
                     auth.createUserWithEmailAndPassword(bind.email.text.toString().trim(),
                         bind.password.text.toString().trim())
@@ -72,8 +76,7 @@ class SignUp : AppCompatActivity(), View.OnClickListener {
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "createUserWithEmail:success")
-                                mDatabase.
-                                child(applicationContext.getString(R.string.app_name))
+                                mDatabase.child(applicationContext.getString(R.string.app_name))
                                     .child(FirebaseAuth.getInstance().currentUser?.uid.toString())
                                     .setValue(hashMap)
                                     .addOnSuccessListener {
