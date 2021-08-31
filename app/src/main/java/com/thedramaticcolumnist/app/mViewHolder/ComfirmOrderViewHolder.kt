@@ -89,6 +89,7 @@ class ComfirmOrderViewHolder(
                 hashMap["date"]=SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date())
                 hashMap["address"]=address
                 hashMap["buyerToken"]=token.toString()
+                hashMap["flag"]="Waiting for approval"
                listener. createOrder(hashMap)
 
             }

@@ -22,5 +22,7 @@ data class ProductModel(
     var road_address: String? = "",
     var state: String? = "",
     var amount: String? = "",
+    var flag: String? = "",
+    var sellerToken: String? = "",
 
 )

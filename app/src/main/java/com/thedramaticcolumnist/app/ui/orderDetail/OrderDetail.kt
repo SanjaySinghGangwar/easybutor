@@ -3,7 +3,10 @@ package com.thedramaticcolumnist.app.ui.orderDetail
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.RatingBar
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -13,6 +16,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.thedramaticcolumnist.app.Database.mDatabase.myOrder
+import com.thedramaticcolumnist.app.Database.mDatabase.productDatabase
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.mLog
@@ -21,7 +25,7 @@ import com.thedramaticcolumnist.app.databinding.OrderDetailBinding
 import com.thedramaticcolumnist.app.mViewHolder.OrderDetailViewHolder
 
 
-class OrderDetail : Fragment() {
+class OrderDetail : Fragment(), RatingBar.OnRatingBarChangeListener {
 
     private var _binding: OrderDetailBinding? = null
     private val bind get() = _binding!!
@@ -54,6 +58,11 @@ class OrderDetail : Fragment() {
                 bind.quantity.text = snapshot.child("quantity").value.toString()
                 bind.sellerID.text = snapshot.child("seller").value.toString()
                 bind.shortDescription.text = snapshot.child("short_description").value.toString()
+
+                if (snapshot.hasChild("rate")) {
+                    bind.ratingBar.rating = snapshot.child("rate").value.toString().toFloat()
+                }
+
                 Glide.with(requireContext())
                     .load(snapshot.child("image_one").value.toString())
                     .placeholder(R.drawable.ic_default_product)
@@ -68,49 +77,66 @@ class OrderDetail : Fragment() {
 
         })
     }
+
     private fun fetchRealTimeStatusOfOrder() {
         try {
-            myOrder.child(args.id).child("Status")
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        if (snapshot.hasChild("flag")) {
-                            if (snapshot.hasChild("flag"))
-                                bind.status.text = snapshot.child("flag").value.toString()
+            myOrder.child(args.id).addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.hasChild("flag")) {
+                        if (snapshot.hasChild("flag"))
+                            bind.status.text = snapshot.child("flag").value.toString()
 
-                            if (snapshot.child("flag").value.toString() == "Waiting for Shipment detail") {
-                                bind.trackingLayout.visibility = View.VISIBLE
-                                bind.shippedLayout.visibility = View.VISIBLE
+                        when (snapshot.child("flag").value.toString()) {
+                            "Waiting for Shipment detail" -> {
+                                bind.trackingLayout.visibility = VISIBLE
+                                bind.shippedLayout.visibility = VISIBLE
                                 bind.buttonText.text = "UPDATE"
-                            } else if (snapshot.child("flag").value.toString() == "In-Transit") {
-                                bind.trackingLayout.visibility = View.VISIBLE
-                                bind.shippedLayout.visibility = View.VISIBLE
+                            }
+                            "In-Transit" -> {
+                                bind.trackingLayout.visibility = VISIBLE
+                                bind.shippedLayout.visibility = VISIBLE
                                 bind.buttonText.text = "UPDATE"
 
                                 bind.trackingNumber.setText(snapshot.child("trackingNumber").value.toString())
                                 bind.companyName.setText(snapshot.child("companyName").value.toString())
                             }
-
-                        } else {
-                            bind.status.text = "Waiting for approval"
+                            "Waiting for approval" -> {
+                                bind.status.text = "Waiting for approval"
+                            }
+                            "Cancelled by seller" -> {
+                                bind.approve.visibility = GONE
+                            }
+                            "Delivered" -> {
+                                //bind.rating.visibility = VISIBLE
+                            }
                         }
+                    } else {
+                        bind.status.text = "Waiting for approval"
                     }
+                }
 
-                    override fun onCancelled(error: DatabaseError) {
-                        mToast(requireContext(), error.message)
-                    }
+                override fun onCancelled(error: DatabaseError) {
+                    mToast(requireContext(), error.message)
+                }
 
-                })
+            })
         } catch (e: Exception) {
             mLog("STATUS IS NOT THERE")
         }
     }
-    private fun initAllComponents() {
 
+    private fun initAllComponents() {
+        bind.ratingBar.setOnRatingBarChangeListener(this)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onRatingChanged(ratingBar: RatingBar?, rating: Float, fromUser: Boolean) {
+        productDatabase.child(args.id).child("rate").setValue(rating)
+        myOrder.child(args.id).child("rate").setValue(rating)
     }
 
 }

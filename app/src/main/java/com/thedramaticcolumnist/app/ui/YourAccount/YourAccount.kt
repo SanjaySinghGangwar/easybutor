@@ -15,7 +15,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.thedramaticcolumnist.app.Database.mDatabase.mDatabase
 import com.thedramaticcolumnist.app.R
@@ -76,12 +75,14 @@ class YourAccount : Fragment(), View.OnClickListener {
                     }
                     if (snapshot.hasChild("profile_image")) {
                         imageUrl = snapshot.child("profile_image").value.toString()
-                        Glide.with(requireContext())
-                            .load(imageUrl)
-                            .placeholder(R.drawable.ic_person)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .error(R.drawable.ic_error)
-                            .into(bind.image);
+                        if (isAdded) {
+                            Glide.with(requireContext())
+                                .load(imageUrl)
+                                .placeholder(R.drawable.ic_person)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .error(R.drawable.ic_error)
+                                .into(bind.image);
+                        }
                     }
                 }
 
@@ -101,18 +102,16 @@ class YourAccount : Fragment(), View.OnClickListener {
 
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.edit -> {
                 val edit =
-                    EditProfile(bind.name.text.toString(),
+                    EditProfile(
+                        bind.name.text.toString(),
                         bind.phone.text.toString(),
-                        imageUrl)
+                        imageUrl
+                    )
 
                 edit.show(parentFragmentManager, "")
             }
@@ -125,7 +124,8 @@ class YourAccount : Fragment(), View.OnClickListener {
             }
             R.id.wishlist -> {
                 view?.findNavController()?.navigate(R.id.account_to_wishlist)
-            } R.id.orders -> {
+            }
+            R.id.orders -> {
                 view?.findNavController()?.navigate(R.id.account_to_nav_order)
             }
         }

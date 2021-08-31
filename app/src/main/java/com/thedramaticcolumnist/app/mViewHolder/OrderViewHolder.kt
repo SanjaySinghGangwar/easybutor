@@ -29,6 +29,7 @@ class OrderViewHolder(
         bind.price.text=item.price
         bind.shortDescription.text=item.short_description
         bind.quantity.text=item.quantity
+        bind.flag.text=item.flag
 
         Glide.with(context)
             .load(item.image_one)

@@ -17,9 +17,8 @@ import com.thedramaticcolumnist.app.Model.SliderData
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
-import com.thedramaticcolumnist.app.databinding.ProductDetailBinding
-import com.thedramaticcolumnist.app.adapter.SliderAdapter
 import com.thedramaticcolumnist.app.adapter.SliderAdapterProducts
+import com.thedramaticcolumnist.app.databinding.ProductDetailBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -72,7 +71,8 @@ class ProductDetail : Fragment(), View.OnClickListener {
 
         val adapter = SliderAdapterProducts(
             requireContext(),
-            sliderDataArrayList)
+            sliderDataArrayList
+        )
 
         sliderView.autoCycleDirection = SliderView.LAYOUT_DIRECTION_LTR
         sliderView.setSliderAdapter(adapter)
@@ -166,10 +166,14 @@ class ProductDetail : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.buyNow -> {
-                addToCard(true)
+                addToCard()
+                if (quantity.toInt() > 0) {
+                    view?.findNavController()?.navigate(R.id.productDetail_to_cart)
+                }
+
             }
             R.id.addToCart -> {
-                addToCard(false)
+                addToCard()
             }
             R.id.wishlist -> {
                 if (quantity.toInt() > 0) {
@@ -181,7 +185,8 @@ class ProductDetail : Fragment(), View.OnClickListener {
                                 } else {
                                     val timestamp =
                                         SimpleDateFormat("yyyyMMddHHmmssmsms").format(Date()) + Random().nextInt(
-                                            1000000)
+                                            1000000
+                                        )
                                     orderDetails["id"] = args.productID
                                     orderDetails["quantity"] = "1"
 
@@ -205,29 +210,25 @@ class ProductDetail : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun addToCard(flags: Boolean) {
+    private fun addToCard() {
         if (quantity.toInt() > 0) {
             myCart?.orderByChild("id")?.equalTo(args.productID)
                 ?.addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if (snapshot.exists()) {
                             mToast(requireContext(), "Already added to cart")
-                            if(flags){
-                                view?.findNavController()?.navigate(R.id.productDetail_to_cart)
-                            }
+
                         } else {
                             val timestamp =
                                 SimpleDateFormat("yyyyMMddHHmmssmsms").format(Date()) + Random().nextInt(
-                                    1000000)
+                                    1000000
+                                )
                             orderDetails["id"] = args.productID
                             orderDetails["quantity"] = "1"
 
                             myCart?.child(timestamp)?.setValue(orderDetails)
                                 ?.addOnSuccessListener {
                                     mToast(requireContext(), "Added to cart")
-                                    if(flags){
-                                        view?.findNavController()?.navigate(R.id.productDetail_to_cart)
-                                    }
                                 }
                         }
                     }
