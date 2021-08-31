@@ -15,6 +15,7 @@ import com.thedramaticcolumnist.app.Database.mDatabase.myCart
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.Model.cart
 import com.thedramaticcolumnist.app.R
+import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.CartBinding
 import com.thedramaticcolumnist.app.databinding.CartItemLayoutBinding
@@ -30,6 +31,7 @@ class Cart : Fragment(), View.OnClickListener {
     lateinit var recyclerAdapter: FirebaseRecyclerAdapter<ProductModel, CartViewHolder>
 
     var cartList = ArrayList<cart>()
+
 
     companion object {
         fun newInstance() = Cart()
@@ -67,9 +69,11 @@ class Cart : Fragment(), View.OnClickListener {
                     viewType: Int,
                 ): CartViewHolder {
                     val binding: CartItemLayoutBinding =
-                        CartItemLayoutBinding.inflate(LayoutInflater.from(parent.context),
+                        CartItemLayoutBinding.inflate(
+                            LayoutInflater.from(parent.context),
                             parent,
-                            false)
+                            false
+                        )
                     return CartViewHolder(requireContext(), binding)
                 }
 
@@ -83,6 +87,7 @@ class Cart : Fragment(), View.OnClickListener {
                     holder.bind(model)
                     cartList.add(cart(model.id, model.quantity))
                     val node = getRef(position).key.toString()
+
                     holder.remove.setOnClickListener {
                         myCart!!.child(node).removeValue()
                             .addOnSuccessListener {
@@ -100,11 +105,7 @@ class Cart : Fragment(), View.OnClickListener {
                                 mToast(requireContext(), "added")
                             }
                     }
-
-
                 }
-
-
             }
 
 
@@ -132,6 +133,7 @@ class Cart : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.clearCart -> {
                 myCart?.removeValue()?.addOnSuccessListener {
+                    mLog("CLEARING $isVisible" + "  ::  " + userVisibleHint)
                     mToast(requireContext(), "Removed")
                 }?.addOnFailureListener {
                     mToast(requireContext(), it.message.toString())
@@ -142,4 +144,5 @@ class Cart : Fragment(), View.OnClickListener {
             }
         }
     }
+
 }
