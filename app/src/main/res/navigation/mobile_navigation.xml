@@ -101,11 +101,6 @@
             app:popExitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
-        android:id="@+id/nav_distributor"
-        android:name="com.thedramaticcolumnist.app.ui.Distributor.MyAddress"
-        android:label="@string/menu_distributor"
-        tools:layout="@layout/my_address" />
-    <fragment
         android:id="@+id/nav_products"
         android:name="com.thedramaticcolumnist.app.ui.Products.ProductsFragment"
         android:label="@string/menu_products"

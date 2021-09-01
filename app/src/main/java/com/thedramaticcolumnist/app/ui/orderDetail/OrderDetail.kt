@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.thedramaticcolumnist.app.Database.mDatabase.myOrder
 import com.thedramaticcolumnist.app.Database.mDatabase.productDatabase
+import com.thedramaticcolumnist.app.FCM.Notification.sendNotification
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.R
 import com.thedramaticcolumnist.app.Utils.mUtils.mLog
@@ -25,17 +26,17 @@ import com.thedramaticcolumnist.app.databinding.OrderDetailBinding
 import com.thedramaticcolumnist.app.mViewHolder.OrderDetailViewHolder
 
 
-class OrderDetail : Fragment(), RatingBar.OnRatingBarChangeListener {
+class OrderDetail : Fragment(), RatingBar.OnRatingBarChangeListener, View.OnClickListener {
 
     private var _binding: OrderDetailBinding? = null
     private val bind get() = _binding!!
     val args: OrderDetailArgs by navArgs()
     lateinit var recyclerAdapter: FirebaseRecyclerAdapter<ProductModel, OrderDetailViewHolder>
-
+    var token = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         _binding = OrderDetailBinding.inflate(inflater, container, false)
         return bind.root
     }
@@ -58,6 +59,7 @@ class OrderDetail : Fragment(), RatingBar.OnRatingBarChangeListener {
                 bind.quantity.text = snapshot.child("quantity").value.toString()
                 bind.sellerID.text = snapshot.child("seller").value.toString()
                 bind.shortDescription.text = snapshot.child("short_description").value.toString()
+                token = snapshot.child("sellerToken").value.toString()
 
                 if (snapshot.hasChild("rate")) {
                     bind.ratingBar.rating = snapshot.child("rate").value.toString().toFloat()
@@ -104,9 +106,18 @@ class OrderDetail : Fragment(), RatingBar.OnRatingBarChangeListener {
                                 bind.status.text = "Waiting for approval"
                             }
                             "Cancelled by seller" -> {
+                                bind.cancelOrder.visibility = GONE
                                 bind.approve.visibility = GONE
+                                if (snapshot.hasChild("trackingNumber")) {
+                                    bind.trackingLayout.visibility = VISIBLE
+                                    bind.shippedLayout.visibility = VISIBLE
+                                  
+                                    bind.trackingNumber.setText(snapshot.child("trackingNumber").value.toString())
+                                    bind.companyName.setText(snapshot.child("companyName").value.toString())
+                                }
                             }
                             "Delivered" -> {
+                                bind.cancelOrder.visibility = GONE
                                 //bind.rating.visibility = VISIBLE
                             }
                         }
@@ -126,7 +137,8 @@ class OrderDetail : Fragment(), RatingBar.OnRatingBarChangeListener {
     }
 
     private fun initAllComponents() {
-        bind.ratingBar.setOnRatingBarChangeListener(this)
+        bind.ratingBar.onRatingBarChangeListener = this
+        bind.cancelOrder.setOnClickListener(this)
     }
 
     override fun onDestroyView() {
@@ -137,6 +149,21 @@ class OrderDetail : Fragment(), RatingBar.OnRatingBarChangeListener {
     override fun onRatingChanged(ratingBar: RatingBar?, rating: Float, fromUser: Boolean) {
         productDatabase.child(args.id).child("rate").setValue(rating)
         myOrder.child(args.id).child("rate").setValue(rating)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.cancelOrder -> {
+                myOrder.child(args.id).child("flag")
+                    .setValue("Cancelled by buyer")
+                sendNotification(
+                    "order",
+                    "Status updated for order",
+                    token,
+                    context
+                )
+            }
+        }
     }
 
 }

@@ -166,14 +166,16 @@ class ProductDetail : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.buyNow -> {
-                addToCard()
+                if (isVisible)
+                    addToCard()
                 if (quantity.toInt() > 0) {
                     view?.findNavController()?.navigate(R.id.productDetail_to_cart)
                 }
 
             }
             R.id.addToCart -> {
-                addToCard()
+                if (isVisible)
+                    addToCard()
             }
             R.id.wishlist -> {
                 if (quantity.toInt() > 0) {

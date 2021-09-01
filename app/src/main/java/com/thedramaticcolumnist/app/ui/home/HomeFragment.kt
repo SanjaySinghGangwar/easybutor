@@ -139,7 +139,10 @@ class HomeFragment : Fragment() {
                 ) {
                     hideLoader()
                     holder.bind(model)
-
+                    holder.card.setOnClickListener {
+                        val action = HomeFragmentDirections.homeToCategoryProducts(model.name.toString())
+                        view?.findNavController()?.navigate(action)
+                    }
                 }
 
 
