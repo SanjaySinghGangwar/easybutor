@@ -2,7 +2,10 @@ package com.thedramaticcolumnist.app.Database
 
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.thedramaticcolumnist.app.FCM.Notification.sendNotification
 import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
@@ -67,4 +70,60 @@ object mDatabase {
     val urlTwo=mDatabase.child("url2")
     val urlThree=mDatabase.child("url3")
     val urlFour=mDatabase.child("url4")
+
+     fun addToWishList(context:Context,productID:String) {
+        val orderDetails: HashMap<String, String> = HashMap<String, String>()
+        mWishList?.orderByChild("id")?.equalTo(productID)
+            ?.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (!snapshot.exists()) {
+                        val timestamp =
+                            SimpleDateFormat("yyyyMMddHHmmssmsms")
+                                .format(Date()) + Random().nextInt(1000000)
+                        orderDetails["id"] = productID
+                        orderDetails["quantity"] = "1"
+
+                        mWishList?.child(timestamp)?.setValue(orderDetails)
+                            ?.addOnSuccessListener {
+                                mToast(context, "Added to wishlist")
+                            }
+                    }else{
+                        mToast(context,"Already added to wishlist")
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    mToast(context, error.message)
+                }
+
+            })
+    }
+
+     fun addToCard(context:Context,productID:String) {
+        val orderDetails: HashMap<String, String> = HashMap<String, String>()
+        myCart?.orderByChild("id")?.equalTo(productID)
+            ?.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (!snapshot.exists()) {
+                        val timestamp = SimpleDateFormat("yyyyMMddHHmmssmsms")
+                            .format(Date()) + Random().nextInt(1000000)
+                        orderDetails["id"] =productID
+                        orderDetails["quantity"] = "1"
+
+                        myCart?.child(timestamp)?.setValue(orderDetails)
+                            ?.addOnSuccessListener {
+                                mToast(context, "Added to cart")
+                            }
+                    }else{
+                        mToast(context,"Already added to cart")
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    mToast(context, error.message)
+                }
+
+            })
+
+    }
 }

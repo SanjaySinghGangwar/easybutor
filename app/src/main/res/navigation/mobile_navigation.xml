@@ -12,6 +12,10 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/home_to_cart"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             app:destination="@id/cart" />
         <action
             android:id="@+id/home_to_CategoryProducts"
@@ -83,11 +87,6 @@
             app:popExitAnim="@android:anim/fade_out" />
     </fragment>
     <fragment
-        android:id="@+id/nav_customer_service"
-        android:name="com.thedramaticcolumnist.app.ui.CustomerService.CustomerService"
-        android:label="@string/menu_customer_service"
-        tools:layout="@layout/customer_fragment" />
-    <fragment
         android:id="@+id/nav_category"
         android:name="com.thedramaticcolumnist.app.ui.Category.CategoryFragment"
         android:label="@string/menu_category"
@@ -143,7 +142,11 @@
             app:popExitAnim="@android:anim/fade_out" />
         <action
             android:id="@+id/productDetail_to_cart"
-            app:destination="@id/cart" />
+            app:destination="@id/cart"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
     </fragment>
     <fragment
         android:id="@+id/viewCategoryProducts"

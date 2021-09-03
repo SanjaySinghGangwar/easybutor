@@ -9,39 +9,39 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.smarteist.autoimageslider.SliderView
-import com.thedramaticcolumnist.app.Database.mDatabase.mWishList
-import com.thedramaticcolumnist.app.Database.mDatabase.myCart
+import com.thedramaticcolumnist.app.Database.mDatabase.addToCard
+import com.thedramaticcolumnist.app.Database.mDatabase.addToWishList
+import com.thedramaticcolumnist.app.Database.mDatabase.productDatabase
+import com.thedramaticcolumnist.app.Model.ProductDetailsModel
 import com.thedramaticcolumnist.app.Model.SliderData
 import com.thedramaticcolumnist.app.R
+import com.thedramaticcolumnist.app.Utils.mUtils.calculateDiscount
 import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.adapter.SliderAdapterProducts
 import com.thedramaticcolumnist.app.databinding.ProductDetailBinding
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.roundToInt
 
 class ProductDetail : Fragment(), View.OnClickListener {
-
-    private lateinit var splitString: ArrayList<String>
-    var images: String = ""
-    val args: ProductDetailArgs by navArgs()
-
-
-    lateinit var database: FirebaseDatabase
-    private lateinit var myRef: DatabaseReference
 
     private var _binding: ProductDetailBinding? = null
     private val bind get() = _binding!!
 
 
-    var arrayList = ArrayList<String>()
-    var orderDetails: HashMap<String, String> = HashMap<String, String>()
+    private lateinit var splitString: ArrayList<String>
 
-    var quantity: String = ""
+
+    val args: ProductDetailArgs by navArgs()
+    var orderDetails: HashMap<String, String> = HashMap<String, String>()
+    var quantity: String = "0"
+    var images: String = ""
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -82,76 +82,41 @@ class ProductDetail : Fragment(), View.OnClickListener {
     }
 
     private fun initAllComponent() {
-        database = FirebaseDatabase.getInstance()
-        myRef = database.getReference("Products")
-            .child(args.productID)
-
+        bind.mrp.paintFlags = bind.mrp.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
         bind.addToCart.setOnClickListener(this)
         bind.wishlist.setOnClickListener(this)
         bind.buyNow.setOnClickListener(this)
-
-        bind.mrp.paintFlags = bind.mrp.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
     }
 
 
     private fun fetchProductDetail() {
-        myRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.hasChild("category")) {
+        productDatabase.child(args.productID)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val data = dataSnapshot.getValue(ProductDetailsModel::class.java)!!
 
-                }
-                if (dataSnapshot.hasChild("image")) {
+                    bind.longDescription.text = data.long_description
+                    bind.price.text = "Selling ₹ ${data.price}"
+                    bind.name.text = data.product_name
+                    bind.shortDescription.text = data.short_description
+                    bind.mrp.text = "MPR ₹ ${data.mrp}"
+                    bind.discount.text = calculateDiscount(data.price, data.mrp)
+
                     images = dataSnapshot.child("image").value.toString()
                     stringToArray(images.substring(1, images.length - 1));
                     setUpSlider()
+
+                    quantity = data.quantity
+                    (activity as AppCompatActivity).supportActionBar?.title = data.product_name
                 }
 
-                if (dataSnapshot.hasChild("long_description")) {
-                    bind.longDescription.text =
-                        dataSnapshot.child("long_description").value.toString()
+                override fun onCancelled(error: DatabaseError) {
+                    mToast(
+                        context?.applicationContext!!,
+                        error.toException().message.toString()
+                    )
                 }
-                if (dataSnapshot.hasChild("price")) {
-                    bind.price.text = "Selling ₹ " + dataSnapshot.child("price").value.toString()
-                }
-                if (dataSnapshot.hasChild("product_name")) {
-                    bind.name.text = dataSnapshot.child("product_name").value.toString()
-                    (activity as AppCompatActivity).supportActionBar?.title =
-                        dataSnapshot.child("product_name").value.toString()
-
-                }
-                if (dataSnapshot.hasChild("seller")) {
-                }
-                if (dataSnapshot.hasChild("short_description")) {
-                    bind.shortDescription.text =
-                        dataSnapshot.child("short_description").value.toString()
-                }
-
-                if (dataSnapshot.hasChild("quantity")) {
-                    quantity =
-                        dataSnapshot.child("quantity").value.toString()
-                }
-
-                if (dataSnapshot.hasChild("mrp")) {
-                    bind.mrp.text =
-                        "MPR ₹ " + dataSnapshot.child("mrp").value.toString()
-                }
-
-                if (dataSnapshot.hasChild("mrp") && dataSnapshot.hasChild("price")) {
-                    val price = dataSnapshot.child("price").value.toString()
-                    val mrp = dataSnapshot.child("mrp").value.toString()
-                    bind.discount.text =
-                        100.minus((price.toFloat() / mrp.toFloat()) * 100).roundToInt()
-                            .toString() + " %"
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                mToast(
-                    context?.applicationContext!!,
-                    error.toException().message.toString()
-                )
-            }
-        })
+            })
     }
 
     private fun stringToArray(images: String) {
@@ -166,44 +131,20 @@ class ProductDetail : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.buyNow -> {
-                if (isVisible)
-                    addToCard()
-                if (quantity.toInt() > 0) {
+                if (quantity != "0") {
+                    addToCard(requireContext(), args.productID)
                     view?.findNavController()?.navigate(R.id.productDetail_to_cart)
+                }
+            }
+            R.id.addToCart -> {
+                if (quantity != "0") {
+                    addToCard(requireContext(), args.productID)
                 }
 
             }
-            R.id.addToCart -> {
-                if (isVisible)
-                    addToCard()
-            }
             R.id.wishlist -> {
                 if (quantity.toInt() > 0) {
-                    mWishList?.orderByChild("id")?.equalTo(args.productID)
-                        ?.addValueEventListener(object : ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                if (snapshot.exists()) {
-                                    mToast(requireContext(), "Already added to wishlist")
-                                } else {
-                                    val timestamp =
-                                        SimpleDateFormat("yyyyMMddHHmmssmsms").format(Date()) + Random().nextInt(
-                                            1000000
-                                        )
-                                    orderDetails["id"] = args.productID
-                                    orderDetails["quantity"] = "1"
-
-                                    mWishList?.child(timestamp)?.setValue(orderDetails)
-                                        ?.addOnSuccessListener {
-                                            mToast(requireContext(), "Added to wishlist")
-                                        }
-                                }
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-
-                            }
-
-                        })
+                    addToWishList(requireContext(), args.productID)
                 } else {
                     mToast(requireContext(), "Item out of stock")
                 }
@@ -212,38 +153,57 @@ class ProductDetail : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun addToCard() {
-        if (quantity.toInt() > 0) {
-            myCart?.orderByChild("id")?.equalTo(args.productID)
-                ?.addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        if (snapshot.exists()) {
-                            mToast(requireContext(), "Already added to cart")
+    /* private fun addToWishList() {
+         mWishList?.orderByChild("id")?.equalTo(args.productID)
+             ?.addValueEventListener(object : ValueEventListener {
+                 override fun onDataChange(snapshot: DataSnapshot) {
+                     if (!snapshot.exists()) {
+                         val timestamp =
+                             SimpleDateFormat("yyyyMMddHHmmssmsms")
+                                 .format(Date()) + Random().nextInt(1000000)
+                         orderDetails["id"] = args.productID
+                         orderDetails["quantity"] = "1"
 
-                        } else {
-                            val timestamp =
-                                SimpleDateFormat("yyyyMMddHHmmssmsms").format(Date()) + Random().nextInt(
-                                    1000000
-                                )
-                            orderDetails["id"] = args.productID
-                            orderDetails["quantity"] = "1"
+                         mWishList?.child(timestamp)?.setValue(orderDetails)
+                             ?.addOnSuccessListener {
+                                 mToast(requireContext(), "Added to wishlist")
+                             }?.addOnFailureListener {
+                                 mToast(requireContext(), it.message.toString())
+                             }
+                     }
+                 }
 
-                            myCart?.child(timestamp)?.setValue(orderDetails)
-                                ?.addOnSuccessListener {
-                                    mToast(requireContext(), "Added to cart")
-                                }
-                        }
-                    }
+                 override fun onCancelled(error: DatabaseError) {
+                     mToast(requireContext(), error.message)
+                 }
 
-                    override fun onCancelled(error: DatabaseError) {
+             })
+     }
 
-                    }
+     private fun addToCard() {
+         myCart?.orderByChild("id")?.equalTo(args.productID)
+             ?.addValueEventListener(object : ValueEventListener {
+                 override fun onDataChange(snapshot: DataSnapshot) {
+                     if (!snapshot.exists()) {
+                         val timestamp = SimpleDateFormat("yyyyMMddHHmmssmsms")
+                             .format(Date()) + Random().nextInt(1000000)
+                         orderDetails["id"] = args.productID
+                         orderDetails["quantity"] = "1"
 
-                })
-        } else {
-            mToast(requireContext(), "Item out of stock")
-        }
-    }
+                         myCart?.child(timestamp)?.setValue(orderDetails)
+                             ?.addOnSuccessListener {
+                                 mToast(requireContext(), "Added to cart")
+                             }
+                     }
+                 }
+
+                 override fun onCancelled(error: DatabaseError) {
+                     mToast(requireContext(), error.message)
+                 }
+
+             })
+
+     }*/
 
     override fun onDestroyView() {
         super.onDestroyView()

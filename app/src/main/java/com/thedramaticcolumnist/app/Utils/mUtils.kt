@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import kotlin.math.roundToInt
 
 object mUtils {
     fun mToast(context: Context, message: String) {
@@ -15,6 +16,7 @@ object mUtils {
 
     fun mLog(message: String) {
         Log.i("SANJAY", "mLog: $message")
+        print("SANJAY :: $message")
     }
 
     fun isValidText(text: String?, editText: EditText): Boolean {
@@ -36,5 +38,10 @@ object mUtils {
         if (progressBar.visibility == View.VISIBLE) {
             progressBar.visibility = View.GONE
         }
+    }
+
+    fun calculateDiscount(price: String, mrp: String): String {
+        return 100.minus((price.toFloat() / mrp.toFloat()) * 100).roundToInt()
+            .toString() + " %"
     }
 }

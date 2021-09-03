@@ -22,7 +22,7 @@
             android:title="@string/menu_category" />
         <item
             android:id="@+id/nav_products"
-            android:icon="@drawable/ic_category"
+            android:icon="@drawable/ic_default_product"
             android:title="@string/menu_products" />
         <item
             android:id="@+id/nav_distributor"

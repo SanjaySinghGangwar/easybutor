@@ -8,11 +8,13 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/list"
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="invisible"
-        android:weightSum="10">
+        android:weightSum="10"
+        android:focusable="true">
 
 
         <androidx.recyclerview.widget.RecyclerView
