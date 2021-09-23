@@ -11,8 +11,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.thedramaticcolumnist.app.Database.mDatabase.productDatabase
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.databinding.ProductLayoutBinding
 import com.thedramaticcolumnist.app.databinding.ViewCategoryProductsBinding
@@ -25,9 +24,6 @@ class ViewCategoryProducts : Fragment() {
     private val bind get() = _binding!!
 
     val args: ViewCategoryProductsArgs by navArgs()
-
-    private lateinit var myRef: DatabaseReference
-    lateinit var database: FirebaseDatabase
 
 
     override fun onCreateView(
@@ -50,8 +46,7 @@ class ViewCategoryProducts : Fragment() {
 
 
     private fun initAllComponents() {
-        database = FirebaseDatabase.getInstance()
-        myRef = database.reference.child("Products")
+
         bind.recycler.layoutManager = GridLayoutManager(requireContext(), 2)
 
 
@@ -71,8 +66,10 @@ class ViewCategoryProducts : Fragment() {
     private fun initRecycler() {
         val option: FirebaseRecyclerOptions<ProductModel> =
             FirebaseRecyclerOptions.Builder<ProductModel>()
-                .setQuery(myRef.orderByChild("category").equalTo(args.category),
-                    ProductModel::class.java)
+                .setQuery(
+                    productDatabase.orderByChild("category").equalTo(args.category),
+                    ProductModel::class.java
+                )
                 .build()
         val recyclerAdapter =
             object : FirebaseRecyclerAdapter<ProductModel, ProductsViewHolder>(option) {
@@ -81,9 +78,11 @@ class ViewCategoryProducts : Fragment() {
                     viewType: Int,
                 ): ProductsViewHolder {
                     val binding: ProductLayoutBinding =
-                        ProductLayoutBinding.inflate(LayoutInflater.from(parent.context),
+                        ProductLayoutBinding.inflate(
+                            LayoutInflater.from(parent.context),
                             parent,
-                            false)
+                            false
+                        )
                     return ProductsViewHolder(requireContext(), binding)
                 }
 
@@ -97,7 +96,8 @@ class ViewCategoryProducts : Fragment() {
                         //mToast(requireContext(), getRef(position).key.toString())
                         val action =
                             ViewCategoryProductsDirections.actionViewCategoryProductsToProductDetail(
-                                getRef(position).key.toString())
+                                getRef(position).key.toString()
+                            )
                         view?.findNavController()?.navigate(action)
                     }
 

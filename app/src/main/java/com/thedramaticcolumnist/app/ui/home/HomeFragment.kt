@@ -16,10 +16,14 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.gson.Gson
 import com.smarteist.autoimageslider.SliderView
+import com.thedramaticcolumnist.app.Database.mDatabase.mDatabase
 import com.thedramaticcolumnist.app.Database.mDatabase.productDatabase
+import com.thedramaticcolumnist.app.Database.mDatabase.urlOne
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.Model.SliderData
+import com.thedramaticcolumnist.app.Utils.mUtils.mLog
 import com.thedramaticcolumnist.app.adapter.SliderAdapter
 import com.thedramaticcolumnist.app.databinding.CategoryLayoutBinding
 import com.thedramaticcolumnist.app.databinding.FragmentHomeBinding
@@ -33,8 +37,6 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     private var _binding: FragmentHomeBinding? = null
     private val bind get() = _binding!!
-    private lateinit var myRef: DatabaseReference
-    lateinit var database: FirebaseDatabase
 
     var url1 =
         "https://media.istockphoto.com/photos/girls-carrying-shopping-bags-picture-id1073935306?k=6&m=1073935306&s=612x612&w=0&h=3vPn17dPt4tAYTfa5izL9BHHE2yV-GPOn3DiN2kTKAo="
@@ -70,6 +72,7 @@ class HomeFragment : Fragment() {
         setUpCategory()
         setUpOffers()
         setUpProducts()
+        //mLog(Gson().toJson(urlOne))
     }
 
     private fun setUpProducts() {
@@ -85,9 +88,11 @@ class HomeFragment : Fragment() {
                     viewType: Int,
                 ): ProductsViewHolder {
                     val binding: ProductLayoutBinding =
-                        ProductLayoutBinding.inflate(LayoutInflater.from(parent.context),
+                        ProductLayoutBinding.inflate(
+                            LayoutInflater.from(parent.context),
                             parent,
-                            false)
+                            false
+                        )
                     return ProductsViewHolder(requireContext(), binding)
                 }
 
@@ -100,7 +105,8 @@ class HomeFragment : Fragment() {
                     bind.progressBar.visibility = GONE
                     holder.bind(model)
                     holder.card.setOnClickListener {
-                        val action = HomeFragmentDirections.homeToProductDetail(getRef(position).key.toString())
+                        val action =
+                            HomeFragmentDirections.homeToProductDetail(getRef(position).key.toString())
                         view?.findNavController()?.navigate(action)
                     }
 
@@ -117,7 +123,7 @@ class HomeFragment : Fragment() {
         showLoader()
         val option: FirebaseRecyclerOptions<ProductModel> =
             FirebaseRecyclerOptions.Builder<ProductModel>()
-                .setQuery(myRef.child("Offers"), ProductModel::class.java)
+                .setQuery(mDatabase.child("Offers"), ProductModel::class.java)
                 .build()
         val recyclerAdapter =
             object : FirebaseRecyclerAdapter<ProductModel, CategoryViewHolder>(option) {
@@ -126,9 +132,11 @@ class HomeFragment : Fragment() {
                     viewType: Int,
                 ): CategoryViewHolder {
                     val binding: CategoryLayoutBinding =
-                        CategoryLayoutBinding.inflate(LayoutInflater.from(parent.context),
+                        CategoryLayoutBinding.inflate(
+                            LayoutInflater.from(parent.context),
                             parent,
-                            false)
+                            false
+                        )
                     return CategoryViewHolder(requireContext(), binding)
                 }
 
@@ -140,7 +148,8 @@ class HomeFragment : Fragment() {
                     hideLoader()
                     holder.bind(model)
                     holder.card.setOnClickListener {
-                        val action = HomeFragmentDirections.homeToCategoryProducts(model.name.toString())
+                        val action =
+                            HomeFragmentDirections.homeToCategoryProducts(model.name.toString())
                         view?.findNavController()?.navigate(action)
                     }
                 }
@@ -156,7 +165,7 @@ class HomeFragment : Fragment() {
         showLoader()
         val option: FirebaseRecyclerOptions<ProductModel> =
             FirebaseRecyclerOptions.Builder<ProductModel>()
-                .setQuery(myRef.child("Categories"), ProductModel::class.java)
+                .setQuery(mDatabase.child("Categories"), ProductModel::class.java)
                 .build()
         val recyclerAdapter =
             object : FirebaseRecyclerAdapter<ProductModel, CategoryViewHolder>(option) {
@@ -165,9 +174,11 @@ class HomeFragment : Fragment() {
                     viewType: Int,
                 ): CategoryViewHolder {
                     val binding: CategoryLayoutBinding =
-                        CategoryLayoutBinding.inflate(LayoutInflater.from(parent.context),
+                        CategoryLayoutBinding.inflate(
+                            LayoutInflater.from(parent.context),
                             parent,
-                            false)
+                            false
+                        )
                     return CategoryViewHolder(requireContext(), binding)
                 }
 
@@ -179,7 +190,8 @@ class HomeFragment : Fragment() {
                     hideLoader()
                     holder.bind(model)
                     holder.card.setOnClickListener {
-                        val action = HomeFragmentDirections.homeToCategoryProducts(model.name.toString())
+                        val action =
+                            HomeFragmentDirections.homeToCategoryProducts(model.name.toString())
                         view?.findNavController()?.navigate(action)
                     }
 
@@ -209,7 +221,8 @@ class HomeFragment : Fragment() {
 
         val adapter = SliderAdapter(
             requireContext(),
-            sliderDataArrayList)
+            sliderDataArrayList
+        )
 
         sliderView.autoCycleDirection = SliderView.LAYOUT_DIRECTION_LTR
         sliderView.setSliderAdapter(adapter)
@@ -219,8 +232,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun initAllComponents() {
-        database = FirebaseDatabase.getInstance()
-        myRef = database.reference
         bind.categoryRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
         bind.offersRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
         bind.productsRecycler.layoutManager = GridLayoutManager(requireContext(), 2)

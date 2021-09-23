@@ -17,6 +17,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.thedramaticcolumnist.app.Database.mDatabase.productDatabase
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.databinding.ProductLayoutBinding
 import com.thedramaticcolumnist.app.databinding.ProductsFragmentBinding
@@ -26,15 +27,6 @@ class ProductsFragment : Fragment() {
     private lateinit var productsAccountViewModel: ProductsViewModel
     private var _binding: ProductsFragmentBinding? = null
     private val bind get() = _binding!!
-
-
-    private lateinit var myRef: DatabaseReference
-    lateinit var database: FirebaseDatabase
-
-
-    companion object {
-        fun newInstance() = ProductsFragment()
-    }
 
 
     override fun onCreateView(
@@ -61,11 +53,7 @@ class ProductsFragment : Fragment() {
     }
 
     private fun initAllComponents() {
-        database = FirebaseDatabase.getInstance()
-        myRef = database.reference.child("Products")
         bind.recycler.layoutManager = GridLayoutManager(requireContext(), 2)
-
-
     }
 
 
@@ -83,7 +71,7 @@ class ProductsFragment : Fragment() {
     private fun initRecycler() {
         val option: FirebaseRecyclerOptions<ProductModel> =
             FirebaseRecyclerOptions.Builder<ProductModel>()
-                .setQuery(myRef.orderByChild("product_name"), ProductModel::class.java)
+                .setQuery(productDatabase.orderByChild("product_name"), ProductModel::class.java)
                 .build()
         val recyclerAdapter =
             object : FirebaseRecyclerAdapter<ProductModel, ProductsViewHolder>(option) {

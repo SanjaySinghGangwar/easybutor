@@ -13,6 +13,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.thedramaticcolumnist.app.Database.mDatabase.mDatabase
 import com.thedramaticcolumnist.app.Model.ProductModel
 import com.thedramaticcolumnist.app.databinding.CategoryFragmentBinding
 import com.thedramaticcolumnist.app.databinding.CategoryLayoutBinding
@@ -23,11 +24,7 @@ class CategoryFragment : Fragment() {
 
     private lateinit var categoryViewModel: CategoryViewModel
     private var _binding: CategoryFragmentBinding? = null
-
-
     private val bind get() = _binding!!
-    private lateinit var myRef: DatabaseReference
-    lateinit var database: FirebaseDatabase
 
     companion object {
         fun newInstance() = CategoryFragment()
@@ -60,8 +57,6 @@ class CategoryFragment : Fragment() {
 
 
     private fun initAllComponents() {
-        database = FirebaseDatabase.getInstance()
-        myRef = database.reference
         bind.categoryRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
 
     }
@@ -70,7 +65,7 @@ class CategoryFragment : Fragment() {
         showLoader()
         val option: FirebaseRecyclerOptions<ProductModel> =
             FirebaseRecyclerOptions.Builder<ProductModel>()
-                .setQuery(myRef.child("Categories"), ProductModel::class.java)
+                .setQuery(mDatabase.child("Categories"), ProductModel::class.java)
                 .build()
         val recyclerAdapter =
             object : FirebaseRecyclerAdapter<ProductModel, CategoryViewHolder>(option) {

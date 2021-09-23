@@ -66,12 +66,12 @@ object mDatabase {
 
     var myOrder = mDatabase.child("Orders")
 
-    val urlOne=mDatabase.child("url1")
-    val urlTwo=mDatabase.child("url2")
-    val urlThree=mDatabase.child("url3")
-    val urlFour=mDatabase.child("url4")
+    val urlOne = mDatabase.child("url1")
+    val urlTwo = mDatabase.child("url2")
+    val urlThree = mDatabase.child("url3")
+    val urlFour = mDatabase.child("url4")
 
-     fun addToWishList(context:Context,productID:String) {
+    fun addToWishList(context: Context, productID: String) {
         val orderDetails: HashMap<String, String> = HashMap<String, String>()
         mWishList?.orderByChild("id")?.equalTo(productID)
             ?.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -87,8 +87,8 @@ object mDatabase {
                             ?.addOnSuccessListener {
                                 mToast(context, "Added to wishlist")
                             }
-                    }else{
-                        mToast(context,"Already added to wishlist")
+                    } else {
+                        mToast(context, "Already added to wishlist")
                     }
                 }
 
@@ -99,7 +99,7 @@ object mDatabase {
             })
     }
 
-     fun addToCard(context:Context,productID:String) {
+    fun addToCard(context: Context, productID: String) {
         val orderDetails: HashMap<String, String> = HashMap<String, String>()
         myCart?.orderByChild("id")?.equalTo(productID)
             ?.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -107,15 +107,15 @@ object mDatabase {
                     if (!snapshot.exists()) {
                         val timestamp = SimpleDateFormat("yyyyMMddHHmmssmsms")
                             .format(Date()) + Random().nextInt(1000000)
-                        orderDetails["id"] =productID
+                        orderDetails["id"] = productID
                         orderDetails["quantity"] = "1"
 
                         myCart?.child(timestamp)?.setValue(orderDetails)
                             ?.addOnSuccessListener {
                                 mToast(context, "Added to cart")
                             }
-                    }else{
-                        mToast(context,"Already added to cart")
+                    } else {
+                        mToast(context, "Already added to cart")
                     }
                 }
 
