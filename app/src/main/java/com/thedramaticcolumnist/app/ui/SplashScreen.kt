@@ -24,7 +24,7 @@ class SplashScreen : AppCompatActivity() {
 
     private fun moveToNextPage() {
         val user = Firebase.auth.currentUser
-        Timer().schedule(2000) {
+        Timer().schedule(1500) {
             if (user != null) {
                 intent = Intent(this@SplashScreen, HomeScreen::class.java)
                 startActivity(intent)

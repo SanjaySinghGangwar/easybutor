@@ -176,6 +176,13 @@
             app:exitAnim="@android:anim/fade_out"
             app:popEnterAnim="@android:anim/fade_in"
             app:popExitAnim="@android:anim/fade_out" />
+        <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            android:id="@+id/search_to_productsBySeller"
+            app:destination="@id/productsBySeller" />
     </fragment>
     <fragment
         android:id="@+id/address2"
@@ -213,6 +220,33 @@
         android:name="com.thedramaticcolumnist.app.ui.orderDetail.OrderDetail"
         android:label="Order Details"
         tools:layout="@layout/order_detail">
+        <argument
+            android:name="id"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_customer_service"
+        android:name="com.thedramaticcolumnist.app.ui.customer_service"
+        android:label="Customer Support"
+        tools:layout="@layout/customer_service" />
+    <fragment
+        android:id="@+id/nav_distributor"
+        android:name="com.thedramaticcolumnist.app.ui.Distributor.Distributors"
+        android:label="Distributors"
+        tools:layout="@layout/distributors" >
+        <action
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            android:id="@+id/distributor_to_productsBySeller"
+            app:destination="@id/productsBySeller" />
+    </fragment>
+    <fragment
+        android:id="@+id/productsBySeller"
+        android:name="com.thedramaticcolumnist.app.ui.Products.ProdutsBySeller.ProductsBySeller"
+        android:label="Products by seller"
+        tools:layout="@layout/products_by_seller" >
         <argument
             android:name="id"
             app:argType="string" />

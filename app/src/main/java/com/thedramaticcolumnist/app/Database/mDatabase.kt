@@ -38,6 +38,8 @@ object mDatabase {
     var uID = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
     var productDatabase = mDatabase.child("Products")
+    var customerSupport = mDatabase.child("Customer Support")
+    var mDistributors = mDatabase.child("Easybutor Distributor")
 
     var mAddress = myProfile?.child("address")
 

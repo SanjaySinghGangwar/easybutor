@@ -214,7 +214,7 @@
             android:background="@color/amazon"
             android:gravity="center"
             android:padding="15dp"
-            android:text="Add to card"
+            android:text="Add to cart"
             android:textColor="@color/white" />
 
         <TextView

@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.Products.ProductsFragment">
-
+    tools:context=".ui.Distributor.Distributors">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:listitem="@layout/vendors_layout" />
+
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/temp"
@@ -25,7 +26,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_default_product" />
+            android:src="@drawable/ic_person" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -39,8 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="No products are available for currently" />
+            android:text="No distributor found !!" />
     </androidx.appcompat.widget.LinearLayoutCompat>
-
 
 </FrameLayout>

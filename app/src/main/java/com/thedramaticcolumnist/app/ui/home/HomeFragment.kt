@@ -14,29 +14,33 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.smarteist.autoimageslider.SliderView
 import com.thedramaticcolumnist.app.Database.mDatabase.mDatabase
 import com.thedramaticcolumnist.app.Database.mDatabase.productDatabase
-import com.thedramaticcolumnist.app.Database.mDatabase.urlOne
+import com.thedramaticcolumnist.app.Model.ProductListModel
 import com.thedramaticcolumnist.app.Model.ProductModel
+import com.thedramaticcolumnist.app.Model.ProductdetailModel
 import com.thedramaticcolumnist.app.Model.SliderData
-import com.thedramaticcolumnist.app.Utils.mUtils.mLog
+import com.thedramaticcolumnist.app.Utils.mUtils
 import com.thedramaticcolumnist.app.adapter.SliderAdapter
 import com.thedramaticcolumnist.app.databinding.CategoryLayoutBinding
 import com.thedramaticcolumnist.app.databinding.FragmentHomeBinding
-import com.thedramaticcolumnist.app.databinding.ProductLayoutBinding
 import com.thedramaticcolumnist.app.mViewHolder.CategoryViewHolder
-import com.thedramaticcolumnist.app.ui.Products.ProductsViewHolder
+import com.thedramaticcolumnist.app.ui.Search.ProductsListAdapter
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), ProductsListAdapter.onClickListner {
 
     private lateinit var homeViewModel: HomeViewModel
     private var _binding: FragmentHomeBinding? = null
     private val bind get() = _binding!!
+    private var productsListAdapter: ProductsListAdapter? = null
+    private var productsList: ArrayList<ProductListModel> = ArrayList()
+
 
     var url1 =
         "https://media.istockphoto.com/photos/girls-carrying-shopping-bags-picture-id1073935306?k=6&m=1073935306&s=612x612&w=0&h=3vPn17dPt4tAYTfa5izL9BHHE2yV-GPOn3DiN2kTKAo="
@@ -72,52 +76,75 @@ class HomeFragment : Fragment() {
         setUpCategory()
         setUpOffers()
         setUpProducts()
-        //mLog(Gson().toJson(urlOne))
     }
 
     private fun setUpProducts() {
-        showLoader()
-        val option: FirebaseRecyclerOptions<ProductModel> =
-            FirebaseRecyclerOptions.Builder<ProductModel>()
-                .setQuery(productDatabase.limitToFirst(10), ProductModel::class.java)
-                .build()
-        val recyclerAdapter =
-            object : FirebaseRecyclerAdapter<ProductModel, ProductsViewHolder>(option) {
-                override fun onCreateViewHolder(
-                    parent: ViewGroup,
-                    viewType: Int,
-                ): ProductsViewHolder {
-                    val binding: ProductLayoutBinding =
-                        ProductLayoutBinding.inflate(
-                            LayoutInflater.from(parent.context),
-                            parent,
-                            false
+        productDatabase.limitToFirst(10)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    productsList.clear()
+
+                    for (data in snapshot.children) {
+                        productsList.add(
+                            ProductListModel(
+                                data.ref.key.toString(),
+                                data.getValue(ProductdetailModel::class.java)!!
+                            )
                         )
-                    return ProductsViewHolder(requireContext(), binding)
-                }
-
-                override fun onBindViewHolder(
-                    holder: ProductsViewHolder,
-                    position: Int,
-                    model: ProductModel,
-                ) {
-                    hideLoader()
-                    bind.progressBar.visibility = GONE
-                    holder.bind(model)
-                    holder.card.setOnClickListener {
-                        val action =
-                            HomeFragmentDirections.homeToProductDetail(getRef(position).key.toString())
-                        view?.findNavController()?.navigate(action)
                     }
-
+                    mUtils.mLog("Products :: " + Gson().toJson(productsList))
+                    productsListAdapter?.setItems(productsList)
                 }
 
-
-            }
-
-        bind.productsRecycler.adapter = recyclerAdapter
-        recyclerAdapter.startListening()
+                override fun onCancelled(error: DatabaseError) {
+                    mUtils.mToast(requireContext(), error.message)
+                }
+            })
     }
+
+    /* private fun setUpProducts() {
+         showLoader()
+         val option: FirebaseRecyclerOptions<ProductModel> =
+             FirebaseRecyclerOptions.Builder<ProductModel>()
+                 .setQuery(productDatabase.limitToFirst(10), ProductModel::class.java)
+                 .build()
+         val recyclerAdapter =
+             object : FirebaseRecyclerAdapter<ProductModel, ProductsViewHolder>(option) {
+                 override fun onCreateViewHolder(
+                     parent: ViewGroup,
+                     viewType: Int,
+                 ): ProductsViewHolder {
+                     val binding: ProductLayoutBinding =
+                         ProductLayoutBinding.inflate(
+                             LayoutInflater.from(parent.context),
+                             parent,
+                             false
+                         )
+                     return ProductsViewHolder(requireContext(), binding, listener)
+                 }
+
+                 override fun onBindViewHolder(
+                     holder: ProductsViewHolder,
+                     position: Int,
+                     model: ProductModel,
+                 ) {
+                     hideLoader()
+                     bind.progressBar.visibility = GONE
+                     holder.bind(model)
+                     holder.card.setOnClickListener {
+                         val action =
+                             HomeFragmentDirections.homeToProductDetail(getRef(position).key.toString())
+                         view?.findNavController()?.navigate(action)
+                     }
+
+                 }
+
+
+             }
+
+         bind.productsRecycler.adapter = recyclerAdapter
+         recyclerAdapter.startListening()
+     }*/
 
     private fun setUpOffers() {
         showLoader()
@@ -194,16 +221,7 @@ class HomeFragment : Fragment() {
                             HomeFragmentDirections.homeToCategoryProducts(model.name.toString())
                         view?.findNavController()?.navigate(action)
                     }
-
-                    /* holder.card.setOnClickListener {
-                         //mToast(requireContext(), getRef(position).key.toString())
-                         val action = ProductsFragmentDirections.productsToProductDetail(getRef(position).key.toString())
-                         view?.findNavController()?.navigate(action)
-                     }*/
-
                 }
-
-
             }
 
         bind.categoryRecycler.adapter = recyclerAdapter
@@ -235,6 +253,10 @@ class HomeFragment : Fragment() {
         bind.categoryRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
         bind.offersRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
         bind.productsRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
+        bind.productsRecycler.hasFixedSize()
+        productsListAdapter = ProductsListAdapter(requireContext(), this)
+        bind.productsRecycler.adapter = productsListAdapter
+
     }
 
     override fun onDestroyView() {
@@ -252,5 +274,11 @@ class HomeFragment : Fragment() {
         if (bind.progressBar.visibility == VISIBLE) {
             bind.progressBar.visibility = GONE
         }
+    }
+
+    override fun onItemSelect(id: String) {
+        val action =
+            HomeFragmentDirections.homeToProductDetail(id)
+        view?.findNavController()?.navigate(action)
     }
 }
