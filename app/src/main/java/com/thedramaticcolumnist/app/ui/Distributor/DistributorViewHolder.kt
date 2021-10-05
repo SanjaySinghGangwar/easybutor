@@ -7,7 +7,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.thedramaticcolumnist.app.Model.DistributorListModel
 import com.thedramaticcolumnist.app.R
-import com.thedramaticcolumnist.app.Utils.mUtils.mToast
 import com.thedramaticcolumnist.app.databinding.VendorsLayoutBinding
 
 class DistributorViewHolder(
@@ -22,6 +21,7 @@ class DistributorViewHolder(
 
         //setData
         bind.name.text = items.details.name
+        bind.number.text = items.details.phone
         Glide.with(context)
             .load(items.details.profile_image)
             .fitCenter()

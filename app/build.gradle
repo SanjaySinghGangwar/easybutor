@@ -13,7 +13,7 @@ android {
         applicationId "com.thedramaticcolumnist.app"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 7
+        versionCode 8
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -40,6 +40,21 @@ android {
         preDexLibraries = false
         javaMaxHeapSize "4g"
     }
+    signingConfigs {
+        release {
+            storeFile file('./src/main/appKey.jks')
+            storePassword 'Android@123'
+            keyAlias 'Sanjay'
+            keyPassword 'Android@123'
+        }
+        debug {
+            storeFile file('./src/main/appKey.jks')
+            storePassword 'Android@123'
+            keyAlias 'Sanjay'
+            keyPassword 'Android@123'
+        }
+    }
+
 }
 
 dependencies {

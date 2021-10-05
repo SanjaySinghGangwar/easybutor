@@ -88,6 +88,7 @@ class OrderDetail : Fragment(), RatingBar.OnRatingBarChangeListener, View.OnClic
                         if (snapshot.hasChild("flag"))
                             bind.status.text = snapshot.child("flag").value.toString()
 
+                        mLog(snapshot.child("flag").value.toString())
                         when (snapshot.child("flag").value.toString()) {
                             "Waiting for Shipment detail" -> {
                                 bind.trackingLayout.visibility = VISIBLE
@@ -101,6 +102,8 @@ class OrderDetail : Fragment(), RatingBar.OnRatingBarChangeListener, View.OnClic
 
                                 bind.trackingNumber.setText(snapshot.child("trackingNumber").value.toString())
                                 bind.companyName.setText(snapshot.child("companyName").value.toString())
+
+                                bind.cancelOrder.visibility = GONE
                             }
                             "Waiting for approval" -> {
                                 bind.status.text = "Waiting for approval"
@@ -111,7 +114,7 @@ class OrderDetail : Fragment(), RatingBar.OnRatingBarChangeListener, View.OnClic
                                 if (snapshot.hasChild("trackingNumber")) {
                                     bind.trackingLayout.visibility = VISIBLE
                                     bind.shippedLayout.visibility = VISIBLE
-                                  
+
                                     bind.trackingNumber.setText(snapshot.child("trackingNumber").value.toString())
                                     bind.companyName.setText(snapshot.child("companyName").value.toString())
                                 }
